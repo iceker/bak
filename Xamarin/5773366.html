@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--导航-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773366.html">使用Xamarin.Forms的企业应用程序模式（电子书）--导航</a>
+            <em>2017-10-10 20:34:46</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Forms包括对页面导航的支持，这通常是由于内部逻辑驱动的状态更改导致用户与UI或应用程序本身的交互而产生的。 但是，在使用Model-View-ViewModel（MVVM）模式的应用程序中实现导航可能非常复杂，因为必须满足以下挑战：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如何识别要导航的视图，使用不引入紧密耦合和视图之间的依赖关系的方法。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如何协调将导航视图的过程实例化和初始化。当使用</span>MVVM<span>时，视图和视图模型需要通过视图的绑定上下文来实例化并相互关联。当应用程序使用依赖注入容器时，视图和视图模型的实例化可能需要特定的构造机制。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>是否执行视图优先导航，或查看模型导航。使用视图优先导航，导航到的页面是指视图类型的名称。在导航期间，指定的视图被实例化，以及其对应的视图模型和其他依赖服务。另一种方法是使用视图模型第一导航，其中导航的页面引用视图模型类型的名称。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如何在视图和视图模型之间干净地分离应用程序的导航行为。</span> MVVM<span>模式提供了应用程序的</span><span>UI</span><span>与其表示和业务逻辑之间的分离。但是，应用程序的导航行为通常会跨越应用程序的</span><span>UI</span><span>和演示文稿部分。用户将经常从视图启动导航，并且视图将由于导航而被替换。然而，通常还需要在视图模型中启动或协调导航。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如何在导航期间传递参数以进行初始化。例如，如果用户浏览到更新订单详细信息的视图，则订单数据将必须传递到视图，以便它可以显示正确的数据。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如何协调导航，以确保遵守某些业务规则。例如，在导航远离视图之前可能会提示用户，以便它们可以更正任何无效数据，或者被提示提交或丢弃在视图中进行的任何数据更改。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本章通过介绍用于执行视图模型第一页导航的</span>NavigationService类来解决这些挑战。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：应用程序使用的</span>NavigationService仅用于在ContentPage实例之间执行分层导航。 使用该服务在其他页面类型之间导航可能会导致意外的行为。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413674"></a><span style="font-family:宋体;"><span>在页之间导航</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>导航逻辑可以驻留在视图的代码隐藏或数据绑定视图模型中。将导航逻辑放置在视图中可能是最简单的方法，但是通过单元测试不容易测试。在视图模型类中放置导航逻辑意味着可以通过单元测试来执行逻辑。此外，视图模型可以实现逻辑来控制导航，以确保执行某些业务规则。例如，一个应用程序可能不允许用户在不首先确保输入的数据有效的情况下远离页面。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">NavigationService类通常从视图模型中调用，以便提升可测试性。但是，从视图模型导航到视图将需要视图模型来引用视图，特别是主动视图模型未关联的视图，这是不推荐的。因此，此处提供的NavigationService将视图模型类型指定为导航到的目标。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用NavigationService类提供视图模型第一导航。该类实现了INavigationService接口，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code249')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code249" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">interface</span> INavigationService <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    ViewModelBase PreviousPageViewModel <span style="color:#0000CC;">{</span> get<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    Task InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Task NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> where TViewModel <span style="color:#0000CC;">:</span> ViewModelBase<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Task NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> parameter<span style="color:#0000CC;">)</span> where TViewModel <span style="color:#0000CC;">:</span> ViewModelBase<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Task RemoveLastFromBackStackAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Task RemoveBackStackAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;"><span>该接口指定实现类必须提供以下方法：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<table style="border-collapse:collapse;width:370.5000pt;">
+	<tbody>
+		<tr>
+			<td valign="center" width="237">
+				<p style="text-align:center;" align="center">
+					<b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;">方法</span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p style="text-align:center;" align="center">
+					<span style="font-family:宋体;">目的</span><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="237">
+				<p style="text-align:left;">
+					<span style="font-family:宋体;font-size:12.0000pt;">InitializeAsync</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">当应用启动时，执行导航到两页之一。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="237">
+				<p>
+					<span style="font-family:宋体;font-size:12.0000pt;">NavigateToAsync</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">执行到指定页面的层次导航。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="237">
+				<p>
+					<span style="font-family:宋体;font-size:12.0000pt;">NavigateToAsync(parameter)</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">执行到指定页面的层次导航，传递参数。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="237">
+				<p>
+					<span style="font-family:宋体;font-size:12.0000pt;">RemoveLastFromBackStackAsync</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">从导航堆栈中删除上一页。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="237">
+				<p>
+					<span style="font-family:宋体;font-size:12.0000pt;">RemoveBackStackAsync</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="257">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">从导航堆栈中删除所有以前的页面。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>另外，</span>INavigationService接口指定一个实现类必须提供一个PreviousPageViewModel属性。 此属性返回与导航堆栈中的上一页相关联的视图模型类型。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>INavigationService接口通常还会指定GoBackAsync方法，该方法用于以编程方式返回到导航堆栈中的上一页。 但是，由于不需要eShopOnContainers手机应用程序，因此无法使用此方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413675"></a><span style="font-family:宋体;"><span>创建</span>NavigationService<span>实例</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>实现</span>INavigationService接口的NavigationService类被注册为具有Autofac依赖注入容器的单例，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code67')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code67" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">builder<span style="color:#0000CC;">.</span>RegisterType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#0000FF;">As</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>SingleInstance<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">INavigationService接口在ViewModelBase类构造函数中解析，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code274')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code274" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">NavigationService <span style="color:#0000CC;">=</span> ViewModelLocator<span style="color:#0000CC;">.</span>Resolve<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>这将返回对存储在</span>Autofac依赖注入容器中的NavigationService对象的引用，该容器由App类中的InitNavigation方法创建。 有关详细信息，请参阅</span><span><a href="#navigating_when_the_app_is_launched"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>应用程序启动时</span></span></u><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;"><span>导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">ViewModelBase类将NavigationService实例存储在一个NavigationService属性中，类型为INavigationService。 因此，从ViewModelBase类派生的所有视图模型类都可以使用NavigationService属性来访问INavigationService接口指定的方法。 这避免了将NavigationService对象从Autofac依赖注入容器注入到每个视图模型类中的开销。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413676"></a><span style="font-family:宋体;"><span>处理导航请求</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Forms提供了NavigationPage类，它实现了一种分层导航体验，用户可以根据需要向前和向后浏览页面。 有关分层导航的更多信息，请参阅Xamarin开发人员中心的分层导航。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers应用程序不直接使用NavigationPage类，而是将CustomPage类包装在CustomNavigationView类中，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code828')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code828" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> partial <span style="color:#0000FF;">class</span> CustomNavigationView <span style="color:#0000CC;">:</span> NavigationPage <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> CustomNavigationView<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">:</span> <span style="color:#0000FF;">base</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        InitializeComponent<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> CustomNavigationView<span style="color:#0000CC;">(</span><span style="color:#FF0000;">Page</span> root<span style="color:#0000CC;">)</span> <span style="color:#0000CC;">:</span> <span style="color:#0000FF;">base</span><span style="color:#0000CC;">(</span>root<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        InitializeComponent<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此包装的目的是为了方便对类的</span>XAML文件中的NavigationPage实例进行样式化。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过调用</span>NavigateToAsync方法之一，在视图模型类中执行导航，指定要导航的页面的视图模型类型，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code701')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code701" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">await NavigationService<span style="color:#0000CC;">.</span>NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下代码示例显示了</span>NavigationService<span>类提供的</span><span>NavigateToAsync</span><span>方法：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code615')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code615" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">await NavigationService<span style="color:#0000CC;">.</span>NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code632')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code632" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> Task NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> where TViewModel <span style="color:#0000CC;">:</span> ViewModelBase <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> InternalNavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">typeof</span><span style="color:#0000CC;">(</span>TViewModel<span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> Task NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> parameter<span style="color:#0000CC;">)</span> where TViewModel <span style="color:#0000CC;">:</span> ViewModelBase <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> InternalNavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">typeof</span><span style="color:#0000CC;">(</span>TViewModel<span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> parameter<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每个方法允许从</span>ViewModelBase类派生的任何视图模型类，通过调用InternalNavigateToAsync方法执行分层导航。 另外，第二个NavigateToAsync方法使导航数据能够被指定为传递给正在导航的视图模型的参数，通常用于执行初始化。 有关更多信息，请参阅</span><span><a href="#passing_parameters_during_navigation"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航期间传递参数</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;">nternalNavigateToAsync<span>方法执行导航请求，并显示在以下代码示例中：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code774')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code774" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task InternalNavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">Type</span> viewModelType<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> parameter<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">Page</span> <span style="color:#FF0000;">page</span> <span style="color:#0000CC;">=</span> CreatePage<span style="color:#0000CC;">(</span>viewModelType<span style="color:#0000CC;">,</span> parameter<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#FF0000;">page</span> <span style="color:#0000FF;">is</span> LoginView<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#FF0000;">Application</span><span style="color:#0000CC;">.</span>Current<span style="color:#0000CC;">.</span>MainPage <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CustomNavigationView<span style="color:#0000CC;">(</span><span style="color:#FF0000;">page</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">else</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        var navigationPage <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Application</span><span style="color:#0000CC;">.</span>Current<span style="color:#0000CC;">.</span>MainPage <span style="color:#0000FF;">as</span> CustomNavigationView<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>navigationPage <span style="color:#0000CC;">!</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            await navigationPage<span style="color:#0000CC;">.</span>PushAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">page</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">else</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#FF0000;">Application</span><span style="color:#0000CC;">.</span>Current<span style="color:#0000CC;">.</span>MainPage <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CustomNavigationView<span style="color:#0000CC;">(</span><span style="color:#FF0000;">page</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    await <span style="color:#0000CC;">(</span><span style="color:#FF0000;">page</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">BindingContext</span> <span style="color:#0000FF;">as</span> ViewModelBase<span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>InitializeAsync<span style="color:#0000CC;">(</span>parameter<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">private</span> <span style="color:#FF0000;">Type</span> GetPageTypeForViewModel<span style="color:#0000CC;">(</span><span style="color:#FF0000;">Type</span> viewModelType<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var viewName <span style="color:#0000CC;">=</span> viewModelType<span style="color:#0000CC;">.</span>FullName<span style="color:#0000CC;">.</span>Replace<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"Model"</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Empty<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewModelAssemblyName <span style="color:#0000CC;">=</span> viewModelType<span style="color:#0000CC;">.</span>GetTypeInfo<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">Assembly</span><span style="color:#0000CC;">.</span>FullName<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewAssemblyName <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">CultureInfo</span><span style="color:#0000CC;">.</span>InvariantCulture<span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"{0}, {1}"</span><span style="color:#0000CC;">,</span> viewName<span style="color:#0000CC;">,</span> viewModelAssemblyName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewType <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Type</span><span style="color:#0000CC;">.</span>GetType<span style="color:#0000CC;">(</span>viewAssemblyName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> viewType<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">private</span> <span style="color:#FF0000;">Page</span> CreatePage<span style="color:#0000CC;">(</span><span style="color:#FF0000;">Type</span> viewModelType<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> parameter<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">Type</span> pageType <span style="color:#0000CC;">=</span> GetPageTypeForViewModel<span style="color:#0000CC;">(</span>viewModelType<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>pageType <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">throw</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">Exception</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">$</span><span style="color:#FF00FF;">"Cannot locate page type for {viewModelType}"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">Page</span> <span style="color:#FF0000;">page</span> <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Activator</span><span style="color:#0000CC;">.</span>CreateInstance<span style="color:#0000CC;">(</span>pageType<span style="color:#0000CC;">)</span> <span style="color:#0000FF;">as</span> <span style="color:#FF0000;">Page</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#FF0000;">page</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">InternalNavigateToAsync方法通过首先调用CreatePage方法来执行对视图模型的导航。 此方法定位与指定视图模型类型相对应的视图，并创建并返回此视图类型的实例。 找到与视图模型类型对应的视图使用基于约定的方法，该方法假定：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>视图与视图模型类型在同一装配体中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>视图位于</span>.Views<span>子命名空间中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>视图模型位于</span>.ViewModels<span>子命名空间中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>查看名称对应于查看模型名称，并删除</span>“模型”。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当视图被实例化时，它与其对应的视图模型相关联。</span> <span>有关如何发生这种情况的更多信息，请参阅</span></span><span><a href="#automatically_creating_a_view_model_with_a_view_model_locator"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用视图模型定位器自动创建视图模型</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果正在创建的视图是</span>LoginView，它将被包装在CustomNavigationView类的新实例中，并分配给Application.Current.MainPage属性。 否则，将检索CustomNavigationView实例，并且如果它不为null，则调用PushAsync方法将正在创建的视图推送到导航堆栈。 但是，如果检索到的CustomNavigationView实例为空，则正在创建的视图将被包装在CustomNavigationView类的新实例中，并分配给Application.Current.MainPage属性。 这种机制确保在导航期间，页面被正确添加到导航堆栈，当它是空的时候，当它包含数据时。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：考虑缓存页面。</span> <span>页面缓存导致当前未显示的视图的内存消耗。</span> <span>但是，没有页面缓存，这意味着</span>XAML解析和构建页面及其视图模型将在每次导航到新页面时出现，这可能会对复杂页面产生影响。 对于精心设计的页面，不使用过多的控件，性能就足够了。 但是，如果遇到缓慢的页面加载时间，页面缓存可能会有帮助。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图创建和导航后，视图的关联视图模型的</span>InitializeAsync方法被执行。 有关更多信息，请参阅</span><span><a href="#passing_parameters_during_navigation"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航期间传递参数</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="navigating_when_the_app_is_launched"></a><span style="font-family:宋体;"><a name="_Toc495413677"></a><span>应用程序启动时导航</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;"><span>当应用程序启动时，</span>App<span>类中的</span><span>InitNavigation</span><span>方法被调用。 以下代码示例显示了此方法：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code802')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code802" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> Task InitNavigation<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var navigationService <span style="color:#0000CC;">=</span> ViewModelLocator<span style="color:#0000CC;">.</span>Resolve<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> navigationService<span style="color:#0000CC;">.</span>InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该方法在</span>Autofac依赖注入容器中创建一个新的NavigationService对象，并在调用其InitializeAsync方法之前返回对它的引用。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：当</span>InavigationService接口由ViewModelBase类解析时，容器返回对调用InitNavigation方法时创建的NavigationService对象的引用。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示了</span>NavigationService InitializeAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code775')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code775" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> Task InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrEmpty<span style="color:#0000CC;">(</span>Settings<span style="color:#0000CC;">.</span>AuthAccessToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">else</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果应用程序具有用于身份验证的缓存访问令牌，则</span>MainView将导航。 否则，导航到LoginView。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关</span>Autofac依赖注入容器的详细信息，请参阅</span><span><a href="#introduction_to_dependency_injection"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>依赖注入简介</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="passing_parameters_during_navigation"></a><span style="font-family:宋体;"><a name="_Toc495413678"></a><span>导航时传递参数</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>由</span>INavigationService接口指定的NavigateToAsync方法之一使导航数据能够被指定为传递给正在导航的视图模型的参数，通常用于执行初始化。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>例如，</span>ProfileViewModel类包含一个OrderDetailCommand，当用户在ProfileView页面上选择一个顺序时，它将执行。 反过来，这将执行OrderDetailAsync方法，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code395')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code395" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task OrderDetailAsync<span style="color:#0000CC;">(</span>Order order<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    await NavigationService<span style="color:#0000CC;">.</span>NavigateToAsync<span style="color:#0000CC;">(</span>order<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用导航到</span>OrderDetailViewModel，传递一个Order实例，该实例表示用户在ProfileView页面上选择的顺序。 当NavigationService类创建OrderDetailView时，OrderDetailViewModel类被实例化并分配给视图的BindingContext。 导航到OrderDetailView后，InternalNavigateToAsync方法执行视图关联视图模型的InitializeAsync方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">InitializeAsync方法在ViewModelBase类中定义为可以覆盖的方法。 此方法指定一个对象参数，表示在导航操作期间要传递给视图模型的数据。 因此，要从导航操作接收数据的视图模型类提供了自己的InitializeAsync方法的实现来执行所需的初始化。 以下代码示例显示了来自OrderDetailViewModel类的InitializeAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code433')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code433" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">override</span> async Task InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> navigationData<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>navigationData <span style="color:#0000FF;">is</span> Order<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				        Order <span style="color:#0000CC;">=</span> await _ordersService<span style="color:#0000CC;">.</span>GetOrderAsync<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				                        <span style="color:#FF0000;">Convert</span><span style="color:#0000CC;">.</span>ToInt32<span style="color:#0000CC;">(</span>order<span style="color:#0000CC;">.</span>OrderNumber<span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> authToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法检索在导航操作期间传递到视图模型中的</span>Order实例，并使用它从OrderService实例中检索完整的订单明细。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="invoking_navigation_using_behaviors"></a><span style="font-family:宋体;"><a name="_Toc495413679"></a><span>使用行为调用导航</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>导航通常由用户交互的视图触发。</span> <span>例如，</span>LoginView在成功认证后执行导航。 以下代码示例显示了一个行为如何调用导航：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code307')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code307" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>WebView <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>WebView<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>behaviors:EventToCommandBehavior <br>
+			</li>
+			<li>
+				            EventName<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Navigating"</span> <br>
+			</li>
+			<li>
+				            EventArgsConverter<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource WebNavigatingEventArgsConverter}"</span> <br>
+			</li>
+			<li>
+				            Command<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding NavigateCommand}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>WebView<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>WebView<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<span style="font-family:宋体;font-size:12.0000pt;"><span>在运行时，</span>EventToCommandBehavior将响应与WebView的交互。 当WebView导航到网页时，导航事件将触发，这将在LoginViewModel中执行NavigateCommand。 默认情况下，事件的事件参数将传递给该命令。 该数据被转换，它在源和目标之间通过EventArgsConverter属性中指定的转换器进行转换，该属性从WebNavigatingEventArgs返回Url。 因此，当执行NavigationCommand时，网页的Url作为参数传递给注册的Action。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<span style="font-family:宋体;"><span>然后，</span>NavigationCommand<span>会执行</span><span>NavigateAsync</span><span>方法，如下面的代码示例所示：</span></span> 
+</p>
+<br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code65')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code65" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task NavigateAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">url</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    await NavigationService<span style="color:#0000CC;">.</span>NavigateToAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    await NavigationService<span style="color:#0000CC;">.</span>RemoveLastFromBackStackAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<span style="font-family:宋体;"><span>此方法调用导航到</span>MainViewModel<span>，并在导航后，从导航堆栈中删除</span><span>LoginView</span><span>页面。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<h2>
+	<a name="_Toc495413680"></a><span style="font-family:宋体;"><span>确认或取消导航</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>应用程序可能需要在导航操作期间与用户进行交互，以便用户可以确认或取消导航。</span> <span>这可能是必需的，例如，当用户在完全完成数据输入页面之前尝试导航。</span> <span>在这种情况下，应用程序应提供允许用户离开页面的通知，或者在发生之前取消导航操作。</span> <span>这可以在视图模型类中通过使用来自通知的响应来控制是否引用导航来实现。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413681"></a><span style="font-family:宋体;"><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">amarin.Forms包括对页面导航的支持，这通常是由于内部逻辑驱动的状态更改的结果，用户与UI的交互或应用程序本身。 然而，在使用MVVM模式的应用程序中实现导航可能很复杂。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本章介绍了一个</span>NavigationService类，用于从视图模型中执行视图模型优先导航。 在视图模型类中放置导航逻辑意味着逻辑可以通过自动测试来实现。 此外，视图模型可以实现逻辑来控制导航，以确保执行某些业务规则。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(37) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773366" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773365.html">使用Xamarin.Forms的企业应用程序模式（电子书）--松散耦合部件之间的通信</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773367.html">使用Xamarin.Forms的企业应用程序模式（电子书）--验证</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

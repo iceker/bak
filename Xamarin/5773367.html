@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--验证-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773367.html">使用Xamarin.Forms的企业应用程序模式（电子书）--验证</a>
+            <em>2017-10-10 20:35:49</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>任何接受用户输入的应用程序都应确保输入有效。</span> <span>例如，应用程序可以检查仅包含特定范围内的字符的输入，具有一定长度，或匹配特定格式。</span> <span>没有验证，用户可以提供导致应用失败的数据。</span> <span>验证强制执行业务规则，并防止攻击者注入恶意数据。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>Model-ViewModel-Model（MVVM）模式的上下文中，通常需要视图模型或模型来执行数据验证，并向视图发出任何验证错误，以便用户可以对其进行更正。 eShopOnContainers移动应用程序执行视图模型属性的同步客户端验证，并通过突出显示包含无效数据的控件，并通过显示通知用户为什么数据无效的错误消息来通知用户任何验证错误。 图6-1显示了在eShopOnContainers移动应用程序中执行验证所涉及的类。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/validation/Images/validation.png" alt="" height="433" width="657"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>6-1<span>：</span><span>eShopOnContainers</span><span>移动应用程序中的验证类</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>查看需要验证的模型属性的类型为</span>ValidatableObject ，每个ValidatableObject 实例将验证规则添加到其Validations属性中。 通过调用ValidatableObject 实例的Validate方法从视图模型中调用验证，该实例检索验证规则并根据ValidatableObject  Value属性执行验证规则。 任何验证错误都被放置在ValidatableObject 实例的Errors属性中，并且ValidatableObject 实例的IsValid属性被更新，以指示验证是成功还是失败。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>属性更改通知由</span>ExtendedBindableObject类提供，因此Entry控件可以绑定到视图模型类中的ValidatableObject 实例的IsValid属性，以通知输入的数据是否有效。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413683"></a><span style="font-family:宋体;"><span>指定验证规则</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;"><span>验证规则通过创建从</span>IValidationRule <span>接口派生的类来指定，如下面的代码示例所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code910')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code910" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">interface</span> IValidationRule<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> ValidationMessage <span style="color:#0000CC;">{</span> get<span style="color:#0000CC;">;</span> set<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> Check<span style="color:#0000CC;">(</span>T value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此接口指定验证规则类必须提供用于执行所需验证的布尔检查方法，以及</span>ValidationMessage属性，其值为验证失败时将显示的验证错误消息。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示了</span>IsNotNullOrEmptyRule 验证规则，用于在eShopOnContainers移动应用程序中使用模拟服务时，验证用户在LoginView上输入的用户名和密码：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code916')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code916" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> IsNotNullOrEmptyRule<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span> <span style="color:#0000CC;">:</span> IValidationRule<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> ValidationMessage <span style="color:#0000CC;">{</span> get<span style="color:#0000CC;">;</span> set<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">bool</span> Check<span style="color:#0000CC;">(</span>T value<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>value <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        var str <span style="color:#0000CC;">=</span> value <span style="color:#0000FF;">as</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> <span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrWhiteSpace<span style="color:#0000CC;">(</span>str<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Check方法返回一个布尔值，指示value参数是空值，空值还是仅由空格字符组成。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>虽然</span>eShopOnContainers手机应用程序未使用，但以下代码示例显示验证电子邮件地址的验证规则：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code405')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code405" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> EmailRule<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span> <span style="color:#0000CC;">:</span> IValidationRule<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> ValidationMessage <span style="color:#0000CC;">{</span> get<span style="color:#0000CC;">;</span> set<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">bool</span> Check<span style="color:#0000CC;">(</span>T value<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>value <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        var str <span style="color:#0000CC;">=</span> value <span style="color:#0000FF;">as</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#FF0000;">Regex</span> <span style="color:#FF0000;">regex</span> <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">Regex</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">@</span><span style="color:#FF00FF;">"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#FF0000;">Match</span> <span style="color:#FF0000;">match</span> <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">regex</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">Match</span><span style="color:#0000CC;">(</span>str<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> <span style="color:#FF0000;">match</span><span style="color:#0000CC;">.</span>Success<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Check方法返回一个布尔值，表示value参数是否是有效的电子邮件地址。 这是通过搜索value参数来获得第一次出现在正则表达式模式中指定的正则表达式构造函数。 是否在输入字符串中找到正则表达式模式可以通过检查Match对象的Success属性的值来确定。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：属性验证有时可能涉及依赖属性。</span> <span>依赖属性的示例是属性</span>A的有效值集合取决于在属性B中设置的特定值。要检查属性A的值是允许的值之一将涉及检索属性B的值 此外，当属性B的值更改时，属性A将需要重新生效。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413684"></a><span style="font-family:宋体;"><span>向属性添加验证规则</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>eShopOnContainers手机应用程序中，需要验证的视图模型属性被声明为ValidatableObject 类型，其中T是要验证的数据的类型。 以下代码示例显示了两个此类属性的示例：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code539')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code539" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> ValidatableObject<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> UserName <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    get <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> _userName<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    set <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _userName <span style="color:#0000CC;">=</span> value<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        RaisePropertyChanged<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> UserName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> ValidatableObject<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> Password <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    get <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> _password<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    set <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _password <span style="color:#0000CC;">=</span> value<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        RaisePropertyChanged<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> Password<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>为了进行验证，验证规则必须添加到每个</span>ValidatableObject 实例的Validations集合中，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code232')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code232" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> AddValidations<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    _userName<span style="color:#0000CC;">.</span>Validations<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> IsNotNullOrEmptyRule<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        ValidationMessage <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"A username is required."</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    _password<span style="color:#0000CC;">.</span>Validations<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> IsNotNullOrEmptyRule<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        ValidationMessage <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"A password is required."</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法将</span>IsNotNullOrEmptyRule 验证规则添加到每个ValidatableObject 实例的Validations集合中，指定验证规则的ValidationMessage属性的值，该属性指定验证失败时将显示的验证错误消息。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413685"></a><span style="font-family:宋体;"><span>触发验证</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序中使用的验证方法可以手动触发属性的验证，并在属性更改时自动触发验证。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413686"></a><span style="font-family:宋体;"><span>手动触发验证</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图模型属性可以手动触发验证。</span> <span>例如，当使用模拟服务时，当用户点击</span>LoginView上的Login按钮时，会发生在eShopOnContainers移动应用程序中。 命令委托在LoginViewModel中调用MockSignInAsync方法，该方法通过执行Validate方法调用验证，该方法显示在以下代码示例中：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code356')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code356" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">bool</span> Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> isValidUser <span style="color:#0000CC;">=</span> ValidateUserName<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> isValidPassword <span style="color:#0000CC;">=</span> ValidatePassword<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> isValidUser <span style="color:#0000CC;">&amp;</span><span style="color:#0000CC;">&amp;</span> isValidPassword<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">private</span> <span style="color:#0000FF;">bool</span> ValidateUserName<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> _userName<span style="color:#0000CC;">.</span>Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">private</span> <span style="color:#0000FF;">bool</span> ValidatePassword<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> _password<span style="color:#0000CC;">.</span>Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Validate方法通过调用每个ValidatableObject 实例上的Validate方法来验证用户在LoginView上输入的用户名和密码。 以下代码示例显示了ValidatableObject 类中的Validate方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code95')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code95" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">bool</span> Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    Errors<span style="color:#0000CC;">.</span>Clear<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">IEnumerable</span><span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> errors <span style="color:#0000CC;">=</span> _validations <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>Where<span style="color:#0000CC;">(</span>v <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#0000CC;">!</span>v<span style="color:#0000CC;">.</span>Check<span style="color:#0000CC;">(</span>Value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>Select<span style="color:#0000CC;">(</span>v <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> v<span style="color:#0000CC;">.</span>ValidationMessage<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Errors <span style="color:#0000CC;">=</span> errors<span style="color:#0000CC;">.</span>ToList<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    IsValid <span style="color:#0000CC;">=</span> <span style="color:#0000CC;">!</span>Errors<span style="color:#0000CC;">.</span>Any<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">this</span><span style="color:#0000CC;">.</span>IsValid<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法将清除</span>Errors集合，然后检索添加到对象的Validations集合的任何验证规则。 执行每个检索的验证规则的检查方法，并且无法验证数据的任何验证规则的ValidationMessage属性值都将添加到ValidatableObject 实例的错误集合中。 最后，设置IsValid属性，并将其值返回给调用方法，指示验证是成功还是失败。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413687"></a><span style="font-family:宋体;"><span>属性更改时触发验证</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>绑定属性更改时也会自动触发验证。</span> <span>例如，当</span>LoginView中的双向绑定设置UserName或Password属性时，会触发验证。 以下代码示例演示了如何发生这种情况：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">  <br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code450')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code450" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Entry Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding UserName.Value, Mode=TwoWay}"</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Entry<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>behaviors:EventToCommandBehavior <br>
+			</li>
+			<li>
+				            EventName<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"TextChanged"</span> <br>
+			</li>
+			<li>
+				            Command<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding ValidateUserNameCommand}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Entry控件绑定到ValidatableObject 实例的UserName.Value属性，控件的Behaviors集合中添加了一个EventToCommandBehavior实例。 响应于条目中的[TextChanged]事件触发，此行为执行ValidateUserNameCommand，当条目中的文本更改时引发。 反过来，ValidateUserNameCommand委托执行ValidateUserName方法，该方法在ValidatableObject 实例上执行Validate方法。 因此，每当用户在用户名的Entry控件中输入一个字符时，进行输入数据的验证。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>有关行为的更多信息，请参阅</span></span><span><a href="#implementing_behaviors"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>实现行为</span></span></u></a></span><span style="font-family:宋体;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="displaying_validation_errors"></a><span style="font-family:宋体;"><a name="_Toc495413688"></a><span>显示验证错误</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">ShopOnContainers手机应用程序通过突出显示包含无效数据的控件以红色线条通知用户任何验证错误，并显示一条错误消息，通知用户为什么数据在包含无效数据的控件下无效。 当无效数据更正时，行变为黑色，并删除错误消息。 eShopOnContainers手机应用程序中的LoginView如图6-2所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/validation/Images/validation-login.png" alt="" height="204" width="560"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>6-2<span>：登录时显示验证错误</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413689"></a><span style="font-family:宋体;"><span>突出显示包含无效数据的控件</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">LineColorBehavior附加行为用于突出显示已发生验证错误的Entry控件。 以下代码示例显示如何将LineColorBehavior附加行为附加到Entry控件：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">  <br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code686')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code686" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Entry Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding UserName.Value, Mode=TwoWay}"</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Entry<span style="color:#0000CC;">.</span>Style<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>OnPlatform x:TypeArguments<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Style"</span> <br>
+			</li>
+			<li>
+				          iOS<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource EntryStyle}"</span> <br>
+			</li>
+			<li>
+				          Android<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource EntryStyle}"</span> <br>
+			</li>
+			<li>
+				          WinPhone<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource UwpEntryStyle}"</span><span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">.</span>Style<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;">Entry<span>控件使用显式样式，如下面的代码示例所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">&lt;style x:key="entrystyle"  <span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"> <br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code712')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code712" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Style x:Key<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"EntryStyle"</span> <br>
+</span> 
+			</li>
+			<li>
+				       TargetType<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{x:Type Entry}"</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Setter Property<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"behaviors:LineColorBehavior.ApplyLineColor"</span> <br>
+			</li>
+			<li>
+				            Value<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"True"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Setter Property<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"behaviors:LineColorBehavior.LineColor"</span> <br>
+			</li>
+			<li>
+				            Value<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource BlackColor}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Style<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此样式将</span>EntryColorBehavior附加行为的ApplyLineColor和LineColor附加属性设置为Entry控件。 有关样式的更多信息，请参阅Xamarin开发人员中心的样式。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>ApplyLineColor附加属性的值被设置或更改时，LineColorBehavior附加行为执行OnApplyLineColorChanged方法，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code9')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code9" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">class</span> LineColorBehavior <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">void</span> OnApplyLineColorChanged<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				                BindableObject bindable<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> oldValue<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> newValue<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        var <span style="color:#FF0000;">view</span> <span style="color:#0000CC;">=</span> bindable <span style="color:#0000FF;">as</span> <span style="color:#FF0000;">View</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#FF0000;">view</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">return</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">bool</span> hasLine <span style="color:#0000CC;">=</span> <span style="color:#0000CC;">(</span><span style="color:#0000FF;">bool</span><span style="color:#0000CC;">)</span>newValue<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>hasLine<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#FF0000;">view</span><span style="color:#0000CC;">.</span>Effects<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> EntryLineColorEffect<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">else</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            var entryLineColorEffectToRemove <span style="color:#0000CC;">=</span> <br>
+			</li>
+			<li>
+				                    <span style="color:#FF0000;">view</span><span style="color:#0000CC;">.</span>Effects<span style="color:#0000CC;">.</span>FirstOrDefault<span style="color:#0000CC;">(</span>e <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> e <span style="color:#0000FF;">is</span> EntryLineColorEffect<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>entryLineColorEffectToRemove <span style="color:#0000CC;">!</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">view</span><span style="color:#0000CC;">.</span>Effects<span style="color:#0000CC;">.</span>Remove<span style="color:#0000CC;">(</span>entryLineColorEffectToRemove<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法的参数提供了行为附加到的控件的实例以及</span>ApplyLineColor附加属性的旧值和新值。 如果ApplyLineColor附加属性为true，则EntryLineColorEffect类将添加到控件的“效果”集合中，否则将从控件的“效果”集合中移除。 有关行为的更多信息，请参阅</span><span><a href="#implementing_behaviors"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>实现行为</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;">EntryLineColorEffect<span>将</span><span>RoutingEffect</span><span>类分类，并显示在以下代码示例中：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code208')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code208" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> EntryLineColorEffect <span style="color:#0000CC;">:</span> RoutingEffect <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> EntryLineColorEffect<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">:</span> <span style="color:#0000FF;">base</span><span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"eShopOnContainers.EntryLineColorEffect"</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">RoutingEffect类代表一个平台无关的效果，它包含了特定于平台的内部效果。 这简化了效果删除过程，因为没有编译时访问类型信息以获取平台特定的效果。 EntryLineColorEffect调用基类构造函数，传入一个包含分辨率组名称的连接和每个特定于平台的效果类指定的唯一ID的参数。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示</span>iOS的eShopOnContainers.EntryLineColorEffect实现：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code779')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code779" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span><span style="color:#FF0000;">assembly</span><span style="color:#0000CC;">:</span> ResolutionGroupName<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"eShopOnContainers"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">[</span><span style="color:#FF0000;">assembly</span><span style="color:#0000CC;">:</span> ExportEffect<span style="color:#0000CC;">(</span><span style="color:#0000FF;">typeof</span><span style="color:#0000CC;">(</span>EntryLineColorEffect<span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"EntryLineColorEffect"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">]</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">namespace</span> eShopOnContainers<span style="color:#0000CC;">.</span>iOS<span style="color:#0000CC;">.</span>Effects <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> EntryLineColorEffect <span style="color:#0000CC;">:</span> PlatformEffect <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        UITextField <span style="color:#FF0000;">control</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">override</span> <span style="color:#0000FF;">void</span> OnAttached<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">try</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">control</span> <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Control</span> <span style="color:#0000FF;">as</span> UITextField<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                UpdateLineColor<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">catch</span> <span style="color:#0000CC;">(</span><span style="color:#FF0000;">Exception</span> ex<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">Console</span><span style="color:#0000CC;">.</span>WriteLine<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"Can't set property on attached control. Error: "</span><span style="color:#0000CC;">,</span> ex<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Message</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">override</span> <span style="color:#0000FF;">void</span> OnDetached<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#FF0000;">control</span> <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">override</span> <span style="color:#0000FF;">void</span> OnElementPropertyChanged<span style="color:#0000CC;">(</span><span style="color:#FF0000;">PropertyChangedEventArgs</span> args<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">base</span><span style="color:#0000CC;">.</span>OnElementPropertyChanged<span style="color:#0000CC;">(</span>args<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>args<span style="color:#0000CC;">.</span>PropertyName <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> LineColorBehavior<span style="color:#0000CC;">.</span>LineColorProperty<span style="color:#0000CC;">.</span>PropertyName <span style="color:#0000CC;">|</span><span style="color:#0000CC;">|</span> <br>
+			</li>
+			<li>
+				                args<span style="color:#0000CC;">.</span>PropertyName <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"Height"</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                Initialize<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                UpdateLineColor<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> Initialize<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            var entry <span style="color:#0000CC;">=</span> Element <span style="color:#0000FF;">as</span> Entry<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>entry <span style="color:#0000CC;">!</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">Control</span><span style="color:#0000CC;">.</span>Bounds <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CGRect<span style="color:#0000CC;">(</span>0<span style="color:#0000CC;">,</span> 0<span style="color:#0000CC;">,</span> entry<span style="color:#0000CC;">.</span>Width<span style="color:#0000CC;">,</span> entry<span style="color:#0000CC;">.</span>Height<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> UpdateLineColor<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            BorderLineLayer lineLayer <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">control</span><span style="color:#0000CC;">.</span>Layer<span style="color:#0000CC;">.</span>Sublayers<span style="color:#0000CC;">.</span>OfType<span style="color:#0000CC;">&lt;</span>BorderLineLayer<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				                                                             <span style="color:#0000CC;">.</span>FirstOrDefault<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>lineLayer <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				                lineLayer <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> BorderLineLayer<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                lineLayer<span style="color:#0000CC;">.</span>MasksToBounds <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                lineLayer<span style="color:#0000CC;">.</span>BorderWidth <span style="color:#0000CC;">=</span> 1<span style="color:#0000CC;">.</span>0f<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">control</span><span style="color:#0000CC;">.</span>Layer<span style="color:#0000CC;">.</span>AddSublayer<span style="color:#0000CC;">(</span>lineLayer<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				                <span style="color:#FF0000;">control</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">BorderStyle</span> <span style="color:#0000CC;">=</span> UITextBorderStyle<span style="color:#0000CC;">.</span>None<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				            lineLayer<span style="color:#0000CC;">.</span>Frame <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CGRect<span style="color:#0000CC;">(</span>0f<span style="color:#0000CC;">,</span> <span style="color:#FF0000;">Control</span><span style="color:#0000CC;">.</span>Frame<span style="color:#0000CC;">.</span>Height<span style="color:#0000CC;">-</span>1f<span style="color:#0000CC;">,</span> <span style="color:#FF0000;">Control</span><span style="color:#0000CC;">.</span>Bounds<span style="color:#0000CC;">.</span>Width<span style="color:#0000CC;">,</span> 1f<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            lineLayer<span style="color:#0000CC;">.</span>BorderColor <span style="color:#0000CC;">=</span> LineColorBehavior<span style="color:#0000CC;">.</span>GetLineColor<span style="color:#0000CC;">(</span>Element<span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>ToCGColor<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#FF0000;">control</span><span style="color:#0000CC;">.</span>TintColor <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">control</span><span style="color:#0000CC;">.</span>TextColor<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">class</span> BorderLineLayer <span style="color:#0000CC;">:</span> CALayer <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OnAttached方法检索Xamarin.Forms Entry控件的本机控件，并通过调用UpdateLineColor方法来更新行颜色。 OnElementPropertyChanged覆盖通过更改线颜色（如果附加的LineColor属性更改）或Entry的Height属性更改来响应Entry控件上的可绑定属性更改。 有关效果的更多信息，请参阅对Xamarin开发人员中心的影响。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当在</span>Entry控件中输入有效数据时，它将在控件的底部应用一条黑线，以表示没有验证错误。 图6-3显示了一个例子。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/validation/Images/validation-blackline.png" alt="" height="70" width="561"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>6-3<span>：黑线表示无验证错误</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Entry控件还将DataTrigger添加到其Triggers集合中。 以下代码示例显示DataTrigger：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">  <br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code919')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code919" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Entry Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding UserName.Value, Mode=TwoWay}"</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Entry<span style="color:#0000CC;">.</span>Triggers<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>DataTrigger <br>
+			</li>
+			<li>
+				            TargetType<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Entry"</span> <br>
+			</li>
+			<li>
+				            Binding<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding UserName.IsValid}"</span> <br>
+			</li>
+			<li>
+				            Value<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"False"</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">&lt;</span>Setter Property<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"behaviors:LineColorBehavior.LineColor"</span> <br>
+			</li>
+			<li>
+				                    Value<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource ErrorColor}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>DataTrigger<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">.</span>Triggers<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Entry<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该</span>DataTrigger监视UserName.IsValid属性，如果值为false，它将执行Setter，它将LineColorBehavior附加行为的LineColor附加属性更改为红色。 图6-4显示了一个例子。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/validation/Images/validation-redline.png" alt="" height="72" width="557"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>6-4<span>：红线表示验证错误</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>输入控件中的行将保持红色，而输入的数据无效，否则将变为黑色，表示输入的数据有效。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>有关触发器的更多信息，请参阅</span>Xamarin<span>开发人员中心的</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/application-fundamentals/triggers/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>触发器</span></span></u></a></span><span style="font-family:宋体;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413690"></a><span style="font-family:宋体;"><span>显示错误信息</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">UI会在数据失败验证的每个控件下面的Label控件中显示验证错误消息。 以下代码示例显示如果用户未输入有效的用户名，则该标签显示验证错误消息：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">&lt;label text="{binding username.errors, converter={staticresource firstvalidationerrorconverter}"  <span style="font-family:宋体;font-size:12.0000pt;"></span> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code148')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code148" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Label Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding UserName.Errors, Converter={StaticResource FirstValidationErrorConverter}"</span> <br>
+</span> 
+			</li>
+			<li>
+				       Style<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource ValidationErrorLabelStyle}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每个标签绑定到正在验证的视图模型对象的</span>Errors属性。 错误属性由ValidatableObject 类提供，类型为List 。 因为Errors属性可能包含多个验证错误，FirstValidationErrorConverter实例用于从集合中检索第一个错误以进行显示。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413691"></a><span style="font-family:宋体;"><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序执行视图模型属性的同步客户端验证，并通过突出显示包含无效数据的控件，并通过显示通知用户为什么数据无效的错误消息通知用户任何验证错误。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>查看需要验证的模型属性的类型为</span>ValidatableObject ，每个ValidatableObject 实例将验证规则添加到其Validations属性中。 通过调用ValidatableObject 实例的Validate方法从视图模型中调用验证，该实例检索验证规则并根据ValidatableObject  Value属性执行验证规则。 任何验证错误都被放置在ValidatableObject 实例的Errors属性中，并且ValidatableObject 实例的IsValid属性被更新，以指示验证是成功还是失败。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(24) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773367" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773366.html">使用Xamarin.Forms的企业应用程序模式（电子书）--导航</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773368.html">使用Xamarin.Forms的企业应用程序模式（电子书）--配置管理</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

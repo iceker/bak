@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--介绍-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773362.html">使用Xamarin.Forms的企业应用程序模式（电子书）--介绍</a>
+            <em>2017-10-10 20:25:07</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;"><span>无论平台如何，企业应用开发人员都面临着几个挑战：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span></span></span><span style="font-family:宋体;"><span>随时间变化的应用程序要求。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>新的商机和挑战。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>开发期间持续的反馈可能会显着影响应用程序的范围和要求。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>考虑到这些，建立可以随时间轻松修改或扩展的应用程序很重要。</span> <span>设计这种适应性可能很困难，因为它需要允许应用程序的各个部分独立开发和测试的架构，而不会影响应用程序的其余部分。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>许多企业应用程序非常复杂，需要多个开发人员。</span> <span>决定如何设计应用程序可能是一个重大挑战，以便多个开发人员可以独立工作在不同的应用程序上，同时确保在集成到应用程序中时，这些程序无缝集成。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>设计和构建应用程序的传统方法导致所谓的单片应用程序，其中组件紧密耦合，并且它们之间没有明确的分离。</span> <span>通常，这种单一的方法导致难以维护的应用程序，因为可能难以在不破坏应用程序中的其他组件的情况下解决错误，并且可能难以添加新功能或替换现有功能。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>对这些挑战的有效补救是将应用程序分解成离散的，松散耦合的组件，可以轻松地集成到应用程序中。</span> <span>这种方法提供了几个好处：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>它允许由个人或团队开发，测试，扩展和维护个人功能。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>它促进应用程序的横向功能（例如身份验证和数据访问）以及垂直功能（例如应用程序特定的业务功能）之间的重用和干净分离。</span> <span>这样可以更容易地管理应用程序组件之间的依赖关系和交互。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>通过允许不同的个人或团队根据专业知识专注于特定任务或功能，有助于保持角色分离。</span> <span>特别是，它在用户界面和应用程序的业务逻辑之间提供了更清晰的分隔。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span><span style="font-family:宋体;"><span></span><span></span></span> 
+	</li>
+</ul>
+<span style="font-family:宋体;"><span>但是，将应用程序分割成离散的，松散耦合的组件时，还有许多问题需要解决。</span> <span>这些包括：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>决定如何在用户界面控件及其逻辑之间提供清晰的分离关系。</span> <span>创建</span>Xamarin.Forms<span>企业应用程序最重要的决定之一是是将业务逻辑放置在代码隐藏文件中，还是在用户界面控件与其逻辑之间创建干净的分离关系，以使应用程序 更可维护和可测试。 有关更多信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773363.html" target="_blank"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">Model-View-ViewModel</span></u></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>确定是否使用依赖注入容器。</span> <span>依赖注入容器通过提供一种用于构建其注册依赖关系的类的实例的设施来减少对象之间的依赖关系，并根据容器的配置来管理其使用寿命。</span> <span>有关详细信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773364.html"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">依赖注入<span></span></span></a><span>。</span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>选择平台提供的事件和组件之间松散耦合的基于消息的通信，这些通信不方便通过对象和类型引用进行链接。</span> <span>有关详细信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773365.html"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">松散耦合组件之间的通信<span></span></span></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>简介。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>决定如何在页面之间导航，包括如何调用导航以及导航逻辑应位于何处。</span> <span>有关详细信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773366.html" target="_blank"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">导航<span></span></span></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>确定如何验证用户输入的正确性。</span> <span>该决定必须包括如何验证用户输入，以及如何通知用户有关验证错误。</span> <span>有关详细信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773367.html"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">验证<span></span></span></a><a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> </a> 
+	</li>
+	<li>
+		<a><span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>决定如何执行身份验证，以及如何通过授权保护资源。</span> <span>有关详细信息，请参阅</span></span></a><a href="http://blog.chinaunix.net/uid-78707-id-5773370.html"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">身份验证和授权</span></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>确定如何从</span>Web<span>服务访问远程数据，包括如何可靠地检索数据以及如何缓存数据。 有关详细信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773372.html" target="_blank"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">访问远程数据</span></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>决定如何测试应用程序。</span> <span>有关更多信息，请参阅</span></span><a href="http://blog.chinaunix.net/uid-78707-id-5773373.html"><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">单元测试</span></a><span style="font-family:Calibri;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本指南提供有关这些问题的指导，并重点介绍使用</span>Xamarin.Forms构建跨平台企业应用程序的核心模式和架构。 该指南旨在通过解决常见的Xamarin.Forms企业应用程序开发场景，并通过支持Model-View-ViewModel（MVVM）模式来分离演示，演示逻辑和实体的关注，从而帮助生成适应性强，可维护和可测试的代码。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413638"></a><span style="font-family:宋体;"><span>示</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"><span>例应用程序</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;"><span>本指南包括一个示例应用程序</span>eShopOnContainers<span>，它是一个包含以下功能的在线商店：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>对后端服务进行身份验证和授权。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>浏览衬衫，咖啡杯和其他营销物品的目录。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>过滤目录。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>从目录中订购料品。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>查看用户的订单历史记录。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>配置设置。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<h2>
+	<a name="_Toc495413639"></a><span style="font-family:宋体;"><span>示例应用程序架构</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;"><span>图</span>1-1<span>提供了示例应用程序架构的高级概述。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/introduction/Images/architecture.png" alt="" height="910" width="1719"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>1-1<span>：</span><span>eShopOnContainers</span><span>高级架构</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>示例应用程序附带三个客户端应用程序：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>使用</span>ASP.NET Core<span>开发的</span><span>MVC</span><span>应用程序。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>用</span>Angular 2<span>和</span><span>Typescript</span><span>开发的单页应用程序（</span><span>SPA</span><span>）。 这种</span><span>Web</span><span>应用程序的方法避免了每次操作对服务器执行往返。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>采用</span>Xamarin.Forms<span>开发的移动应用，支持</span><span>iOS</span><span>，</span><span>Android</span><span>和通用</span><span>Windows</span><span>平台（</span><span>UWP</span><span>）。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关</span>Web应用程序的信息，请参阅</span><span><a href="http://aka.ms/WebAppEbook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用</span>ASP.NET Core<span>和</span><span>Microsoft Azure</span><span>构建和开发现代</span><span>Web</span><span>应用程序</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>示例应用程序包括以下后端服务：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>身份微服务器，它使用</span>ASP.NET Core Identity<span>和</span><span>IdentityServer</span><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>目录微服务器，它是使用</span>EntityFramework Core<span>消耗</span><span>SQL Server</span><span>数据库的数据驱动创建，读取，更新，删除（</span><span>CRUD</span><span>）服务。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>订购微服务器，它是一种使用域驱动设计模式的域驱动服务。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;"><span>一个篮子微服务器，它是一个使用</span>Redis Cache<span>的数据驱动</span><span>CRUD</span><span>服务。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>这些后端服务作为使用</span>ASP.NET Core MVC的微服务实现，并在单个Docker主机中部署为唯一容器。 总而言之，这些后端服务被称为eShopOnContainers参考应用程序。 客户端应用程序通过表示状态转移（REST）Web界面与后端服务进行通信。</span><span style="font-family:宋体;"><span>有关微服务和</span>Docker<span>的更多信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">Containerized<span>微服务</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;">.</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>有关后端服务实现的信息，请参阅</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">.NET<span>微服务：</span></span></u><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>集成</span></span></u><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">.NET<span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;">.。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413640"></a><span style="font-family:宋体;"><span>移动应用</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本指南的重点是使用</span>Xamarin.Forms构建跨平台企业应用程序，并使用eShopOnContainers移动应用程序作为示例。 图1-2显示了eShopOnContainers移动应用程序中提供前面列出的功能的页面。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/introduction/Images/screenshots.png" alt="" height="747" width="856"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>1-2<span>：</span><span>eShopOnContainers</span><span>手机应用程序</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>移动应用程序使用</span>eShopOnContainers参考应用程序提供的后台服务。 但是，它可以配置为为希望避免部署后端服务的用户使用来自模拟服务的数据。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;">eShopOnContainers<span>手机应用程序执行以下</span><span>Xamarin.Forms</span><span>功能：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">XAML</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Controls</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Bindings</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Converters</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Styles</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Animations</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Commands</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Behaviors</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Triggers</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Effects</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Custom Renderers</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">MessagingCenter</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Custom Controls</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关此功能的更多信息，请参阅</span>Xamarin开发人员中心上的</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Xamarin.Forms<span>文档</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>，以及</span></span><span><a href="https://aka.ms/xamebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用</span>Xamarin.Forms<span>创建移动应用程序</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>此外，</span>eShopOnContainers<span>手机应用程序中的某些类提供了单元测试。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413641"></a><span style="font-family:宋体;"><span>移动应用解决方案</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序解决方案将源代码和其他资源组织到项目中。 所有项目都使用文件夹将源代码和其他资源组织到类别中。 下表列出了构成eShopOnContainers手机应用程序的项目：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<table style="border-collapse:collapse;width:415.3000pt;">
+	<tbody>
+		<tr>
+			<td valign="center" width="238">
+				<p style="text-align:center;" align="center">
+					<span style="font-family:宋体;">项目</span><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p style="text-align:center;" align="center">
+					<span style="font-family:宋体;">描述</span><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p style="text-align:left;">
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.Core</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目是包含共享代码和共享<span>UI</span><span>的便携式类库（</span><span>PCL</span><span>）项目。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.Droid</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目拥有<span>Android</span><span>特定代码，是</span><span>Android</span><span>应用的入门点。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.iOS</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目拥有<span>iOS</span><span>专用代码，是</span><span>iOS</span><span>应用程序的入门点。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.UWP</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目拥有通用<span>Windows</span><span>平台（</span><span>UWP</span><span>）特定代码，是</span><span>Windows</span><span>应用程序的入门点。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.TestRunner.Droid</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目是<span>eShopOnContainers.UnitTests</span><span>项目的</span><span>Android</span><span>测试运行器。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.TestRunner.iOS</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">这个项目是<span>eShopOnContainers.UnitTests</span><span>项目的</span><span>iOS</span><span>测试运行器。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.TestRunner.Windows</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;font-size:10.5000pt;">该项目是<span>eShopOnContainers.UnitTests</span><span>项目的通用</span><span>Windows</span><span>平台测试运行器。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="238">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">eShopOnContainers.UnitTests</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="314">
+				<p>
+					<span style="font-family:宋体;">该项目包含<span>eShopOnContainers.Core</span><span>项目的单元测试。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>来自</span>eShopOnContainers手机应用程序的课程可以重新用于任何Xamarin.Forms应用程序，很少或根本没有修改。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h4>
+	<b><span style="font-family:'Calibri Light';font-weight:bold;font-size:14.0000pt;">eShopOnContainers.Core <span>项目</span></span></b><b><span style="font-family:'Calibri Light';font-weight:bold;font-size:14.0000pt;"></span></b> 
+</h4>
+<p>
+	<span style="font-family:宋体;">eShopOnContainers.Core PCL<span>项目包含以下文件夹：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<table style="border-collapse:collapse;width:369.2500pt;">
+	<tbody>
+		<tr>
+			<td valign="center" width="75">
+				<p style="text-align:center;" align="center">
+					<b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;">文件夹</span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p style="text-align:center;" align="center">
+					<b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;">描述</span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:10.5000pt;"></span></b> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p style="text-align:left;">
+					<span style="font-family:Calibri;font-size:10.5000pt;">Animations</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含能够在<span>XAML</span><span>中使用动画的类。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Behaviors</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含暴露于视图类的行为。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Controls</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含应用程序使用的自定义控件。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Converters</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含将自定义逻辑应用于绑定的值转换器。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Effects</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含<span>EntryLineColorEffect</span><span>类，用于更改特定</span><span>Entry</span><span>控件的边框颜色。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Exceptions</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含自定义<span>Service AuthenticationException</span><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Extensions</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含<span>VisualElement</span><span>和</span><span>IEnumerable </span><span>类的扩展方法。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Helpers</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含应用程式的辅助类。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Models</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含该应用程序的模型类。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Properties</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含<span>AssemblyInfo.cs</span><span>，</span><span>.NET</span><span>程序集元数据文件。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Services</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含实现提供给应用程序的服务的接口和类。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Triggers</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含<span>BeginAnimation</span><span>触发器，用于在</span><span>XAML</span><span>中调用动画。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Validations</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含验证数据输入的类。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">ViewModels</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含暴露于页面的应用程序逻辑。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="center" width="75">
+				<p>
+					<span style="font-family:Calibri;font-size:10.5000pt;">Views</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+			<td valign="center" width="416">
+				<p>
+					<span style="font-family:宋体;">包含应用程序的页面。</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+				</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<h4>
+	<span style="font-family:宋体;"><span>平台项目</span></span><b><span style="font-family:'Calibri Light';font-weight:bold;font-size:14.0000pt;"></span></b> 
+</h4>
+<p>
+	<span style="font-family:宋体;"><span>平台项目包含效果实现，自定义渲染器实现和其他平台特定的资源。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413642"></a><span style="font-family:宋体;"><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin的跨平台移动应用开发工具和平台为B2E，B2B和B2C移动客户端应用提供了全面的解决方案，能够在所有目标平台（iOS，Android和Windows）之间共享代码，并有助于降低总成本 的所有权。 应用程序可以共享其用户界面和应用程序逻辑代码，同时保留本机平台的外观和感觉。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:10.5000pt;"><span>企业应用开发人员面临着几个挑战，可以在开发过程中改变应用的架构。</span> <span>因此，重要的是构建一个应用程序，以便随着时间的推移可以修改或扩展。</span> <span>设计这种适应性可能很困难，但通常包括将应用程序分割成离散的，松散耦合的组件，可以轻松地集成到应用程序中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(12) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773362" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773361.html">使用Xamarin.Forms的企业应用程序模式（电子书）--前言</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773363.html">使用Xamarin.Forms的企业应用程序模式（电子书）--MVVM</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--访问远程数据-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773372.html">使用Xamarin.Forms的企业应用程序模式（电子书）--访问远程数据</a>
+            <em>2017-10-10 20:41:03</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>许多现代的基于</span>Web的解决方案利用由Web服务器托管的Web服务来为远程客户端应用程序提供功能。 Web服务公开的操作构成Web API。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>客户端应用程序应该能够在不知道</span>API暴露的数据或操作如何实现的情况下使用Web API。 这要求API遵守通用标准，使客户端应用程序和Web服务能够同意使用哪些数据格式，以及在客户端应用程序和Web服务之间交换的数据的结构。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413720"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>表征状态转移</span></span></b><span style="font-family:宋体;"><span>介绍</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>表征状态转移（</span>REST）是基于超媒体构建分布式系统的架构风格。 REST模型的主要优点在于它基于开放标准，并不将模型的实现或访问它的客户端应用程序绑定到任何特定实现。因此，可以使用Microsoft ASP.NET Core MVC实现REST Web服务，客户端应用程序可能正在使用任何可以生成HTTP请求和解析HTTP响应的语言和工具集进行开发。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">REST模型使用导航方案来表示通过网络（称为资源）的对象和服务。实施REST的系统通常使用HTTP协议来传输访问这些资源的请求。在这样的系统中，客户端应用程序以标识资源的URI的形式提交请求，以及指示要在该资源上执行的操作的HTTP方法（例如GET，POST，PUT或DELETE）。 HTTP请求的正文包含执行操作所需的任何数据。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>REST定义了无状态请求模型。因此，HTTP请求必须是独立的，并且可能以任何顺序发生。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>来自</span>REST请求的响应使用标准HTTP状态代码。例如，返回有效数据的请求应包括HTTP响应代码200（OK），而无法找到或删除指定资源的请求应返回包含HTTP状态代码404（未找到）的响应。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">RESTful Web API公开了一组连接的资源，并提供核心操作，使应用程序能够操纵这些资源并轻松地在它们之间导航。因此，构成典型的RESTful Web API的URI面向其所暴露的数据，并使用HTTP提供的功能对该数据进行操作。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>客户端应用程序在</span>HTTP请求中包含的数据以及来自Web服务器的相应响应消息可以以各种格式呈现，称为媒体类型。当客户端应用程序发送返回消息正文中的数据的请求时，可以在请求的Accept标头中指定它可以处理的媒体类型。如果Web服务器支持这种媒体类型，它可以用包含Content-Type头的响应进行回复，该头指定消息正文中的数据格式。客户端应用程序负责解析响应消息，并将消息体中的结果适当地解释。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关</span>REST的更多信息，请参阅Microsoft Docs上的</span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">API<span>设计</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>和</span></span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-implementation"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">API<span>实现</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413721"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>使用</span>RESTful API</span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用Model-View-ViewModel（MVVM）模式，模式的模型元素表示应用程序中使用的域实体。 eShopOnContainers参考应用程序中的控制器和存储库类接受并返回许多这些模型对象。因此，它们被用作数据传输对象（DTO），其保存在移动应用和集装式微服务之间传递的所有数据。使用DTO将数据传递到Web服务并从Web服务接收数据的主要好处是通过在单个远程呼叫中传输更多数据，该应用程序可以减少需要进行的远程呼叫的数量。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413722"></a><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"><span>制作</span>Web请求</span></b><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用HttpClient类通过HTTP进行请求，JSON用作媒体类型。该类提供了异步发送HTTP请求并从URI标识的资源接收HTTP响应的功能。 HttpResponseMessage类表示在HTTP请求完成后从REST API接收的HTTP响应消息。它包含有关响应的信息，包括状态代码，标题和任何正文。 HttpContent类表示HTTP主体和内容头，例如Content-Type和Content-Encoding。可以使用任何ReadAs方法来读取内容，例如ReadAsStringAsync和ReadAsByteArrayAsync，这取决于数据的格式。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="making_a_get_request"></a><b><span style="font-family:宋体;font-weight:bold;font-size:16.0000pt;"><a name="_Toc495413723"></a><span>发出</span>GET<span>请求</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">CatalogService类用于从目录微服务器管理数据检索过程。在ViewModelLocator类中的RegisterDependencies方法中，CatalogService类是使用Autofac依赖注入容器注册为针对ICatalogService类型的类型映射。然后，当创建CatalogViewModel类的实例时，其构造函数接受一个I</span><span style="font-family:'MS Gothic';font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;">CatalogService类型，该类型由Autofac解析，返回一个CatalogService类的实例。有关依赖注入的更多信息，请参阅</span><span><a href="#introduction_to_dependency_injection"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>依赖注入简介</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-1显示了从Catalog Catalog中读取目录数据库中的目录数据的类的交互。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/accessing-remote-data/Images/catalogdata.png" alt=""><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-1：从目录微服务器检索数据</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>CatalogView导航到，CatalogViewModel类中的OnInitialize方法被调用。 此方法从目录微服务检索目录数据，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code634')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code634" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">override</span> async Task InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> navigationData<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    Products <span style="color:#0000CC;">=</span> await _productsService<span style="color:#0000CC;">.</span>GetCatalogAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用由</span>Autofac注入到CatalogViewModel中的CatalogService实例的GetCatalogAsync方法。 以下代码示例显示了GetCatalogAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code756')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code756" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>ObservableCollection<span style="color:#0000CC;">&lt;</span>CatalogItem<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">&gt;</span> GetCatalogAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">UriBuilder</span> builder <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">UriBuilder</span><span style="color:#0000CC;">(</span>GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>CatalogEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    builder<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Path</span> <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"api/v1/catalog/items"</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span> <span style="color:#0000CC;">=</span> builder<span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    CatalogRoot catalog <span style="color:#0000CC;">=</span> await _requestProvider<span style="color:#0000CC;">.</span>GetAsync<span style="color:#0000CC;">&lt;</span>CatalogRoot<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> catalog<span style="color:#0000CC;">?</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">Data</span><span style="color:#0000CC;">.</span>ToObservableCollection<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法构建标识请求将要发送到的资源的</span>URI，并使用RequestProvider类在资源上调用GET HTTP方法，然后将结果返回到CatalogViewModel。 RequestProvider类包含以标识资源的URI形式提交请求的功能，指示要在该资源上执行的操作的HTTP方法以及包含执行操作所需的任何数据的主体。 有关RequestProvider类如何注入到CatalogService类中的信息，请参阅</span><span><a href="#introduction_to_dependency_injection"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>依赖注入简介</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示</span>RequestProvider类中的GetAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code517')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code517" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span> GetAsync<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> token <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">""</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    HttpClient httpClient <span style="color:#0000CC;">=</span> CreateHttpClient<span style="color:#0000CC;">(</span>token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    HttpResponseMessage response <span style="color:#0000CC;">=</span> await httpClient<span style="color:#0000CC;">.</span>GetAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    await HandleResponse<span style="color:#0000CC;">(</span>response<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> serialized <span style="color:#0000CC;">=</span> await response<span style="color:#0000CC;">.</span>Content<span style="color:#0000CC;">.</span>ReadAsStringAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    TResult result <span style="color:#0000CC;">=</span> await Task<span style="color:#0000CC;">.</span>Run<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        JsonConvert<span style="color:#0000CC;">.</span>DeserializeObject<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>serialized<span style="color:#0000CC;">,</span> _serializerSettings<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> result<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用</span>CreateHttpClient方法，该方法返回HttpClient类的一个实例，并使用相应的头设置。 然后它向URI标识的资源提交异步GET请求，响应存储在HttpResponseMessage实例中。 然后调用HandleResponse方法，如果响应不包含成功的HTTP状态代码，则会抛出异常。 然后将响应读为字符串，从JSON转换为CatalogRoot对象，并返回到CatalogService。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">CreateHttpClient方法显示在以下代码示例中：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code960')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code960" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> HttpClient CreateHttpClient<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> token <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">""</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var httpClient <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> HttpClient<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    httpClient<span style="color:#0000CC;">.</span>DefaultRequestHeaders<span style="color:#0000CC;">.</span>Accept<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> MediaTypeWithQualityHeaderValue<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"application/json"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrEmpty<span style="color:#0000CC;">(</span>token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        httpClient<span style="color:#0000CC;">.</span>DefaultRequestHeaders<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Authorization</span> <span style="color:#0000CC;">=</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">new</span> AuthenticationHeaderValue<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"Bearer"</span><span style="color:#0000CC;">,</span> token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> httpClient<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法创建</span>HttpClient类的新实例，并将HttpClient实例所做的任何请求的Accept标头设置为application / json，这表示它希望使用JSON格式化任何响应的内容。 然后，如果将访问令牌作为参数传递给CreateHttpClient方法，则将其添加到由HttpClient实例创建的任何请求的授权头部，前缀为字符串Bearer。 有关授权的更多信息，请参阅</span><span><a href="#authorization"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授权</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>RequestProvider类中的GetAsync方法调用HttpClient.GetAsync时，将调用Catalog.API项目中CatalogController类中的Items方法，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code244')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code244" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>HttpGet<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">[</span>Route<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"[action]"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">]</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>IActionResult<span style="color:#0000CC;">&gt;</span> Items<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">[</span>FromQuery<span style="color:#0000CC;">]</span><span style="color:#0000FF;">int</span> pageSize <span style="color:#0000CC;">=</span> 10<span style="color:#0000CC;">,</span> <span style="color:#0000CC;">[</span>FromQuery<span style="color:#0000CC;">]</span><span style="color:#0000FF;">int</span> pageIndex <span style="color:#0000CC;">=</span> 0<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var totalItems <span style="color:#0000CC;">=</span> await _catalogContext<span style="color:#0000CC;">.</span>CatalogItems <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>LongCountAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    var itemsOnPage <span style="color:#0000CC;">=</span> await _catalogContext<span style="color:#0000CC;">.</span>CatalogItems <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>OrderBy<span style="color:#0000CC;">(</span>c<span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span>c<span style="color:#0000CC;">.</span>Name<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>Skip<span style="color:#0000CC;">(</span>pageSize <span style="color:#0000CC;">*</span> pageIndex<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>Take<span style="color:#0000CC;">(</span>pageSize<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>ToListAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    itemsOnPage <span style="color:#0000CC;">=</span> ComposePicUri<span style="color:#0000CC;">(</span>itemsOnPage<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var model <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> PaginatedItemsViewModel<span style="color:#0000CC;">&lt;</span>CatalogItem<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				        pageIndex<span style="color:#0000CC;">,</span> pageSize<span style="color:#0000CC;">,</span> totalItems<span style="color:#0000CC;">,</span> itemsOnPage<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> Ok<span style="color:#0000CC;">(</span>model<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法使用</span>EntityFramework从SQL数据库检索目录数据，并将其作为包含成功的HTTP状态代码的响应消息和JSON格式的CatalogItem实例的集合返回。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413724"></a><span style="font-family:宋体;"><span>发出</span>POST<span>请求</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">BasketService类用于通过篮子微服务来管理数据检索和更新过程。 在ViewModelLocator类中的RegisterDependencies方法中，使用Autofac依赖注入容器将BasketService类注册为与IBasketService类型的类型映射。 然后，当创建一个BasketViewModel类的实例时，它的构造函数接受一个IBasketService类型，Autofac解析，返回一个BasketServiceclass的一个实例。 有关依赖注入的更多信息，请参阅</span><span><a href="#introduction_to_dependency_injection"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>依赖注入简介</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-2显示了将BasketView显示的篮子数据发送到篮子微服务器的类的交互。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/accessing-remote-data/Images/basketdata.png" alt="" height="538" width="689"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-2：发送数据到篮子微服务器</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当一个项目被添加到购物篮中时，将调用</span>BasketViewModel类中的ReCalculateTotalAsync方法。 该方法更新了篮子中项目的总价值，并将篮子数据发送到篮子微服务器，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code336')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code336" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task ReCalculateTotalAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    await _basketService<span style="color:#0000CC;">.</span>UpdateBasketAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> CustomerBasket <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        BuyerId <span style="color:#0000CC;">=</span> userInfo<span style="color:#0000CC;">.</span>UserId<span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        Items <span style="color:#0000CC;">=</span> BasketItems<span style="color:#0000CC;">.</span>ToList<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span> authToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用由</span>Autofac注入到BasketViewModel中的BasketService实例的UpdateBasketAsync方法。 以下方法显示UpdateBasketAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code372')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code372" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>CustomerBasket<span style="color:#0000CC;">&gt;</span> UpdateBasketAsync<span style="color:#0000CC;">(</span>CustomerBasket customerBasket<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> token<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">UriBuilder</span> builder <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">UriBuilder</span><span style="color:#0000CC;">(</span>GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>BasketEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span> <span style="color:#0000CC;">=</span> builder<span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var result <span style="color:#0000CC;">=</span> await _requestProvider<span style="color:#0000CC;">.</span>PostAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> customerBasket<span style="color:#0000CC;">,</span> token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> result<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法构建标识请求将要发送到的资源的</span>URI，并使用RequestProvider类在资源上调用POST HTTP方法，然后将结果返回到BasketViewModel。 请注意，在身份验证过程中从IdentityServer获取的访问令牌需要向篮子微服务器授权请求。 有关授权的更多信息，请参阅</span><span><a href="#authorization"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授权</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示</span>RequestProvider类中的PostAsync方法之一：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code80')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code80" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span> PostAsync<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> TResult <span style="color:#FF0000;">data</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> token <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">""</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">header</span> <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">""</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    HttpClient httpClient <span style="color:#0000CC;">=</span> CreateHttpClient<span style="color:#0000CC;">(</span>token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    var content <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> StringContent<span style="color:#0000CC;">(</span>JsonConvert<span style="color:#0000CC;">.</span>SerializeObject<span style="color:#0000CC;">(</span><span style="color:#FF0000;">data</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    content<span style="color:#0000CC;">.</span>Headers<span style="color:#0000CC;">.</span>ContentType <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> MediaTypeHeaderValue<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"application/json"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    HttpResponseMessage response <span style="color:#0000CC;">=</span> await httpClient<span style="color:#0000CC;">.</span>PostAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> content<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    await HandleResponse<span style="color:#0000CC;">(</span>response<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> serialized <span style="color:#0000CC;">=</span> await response<span style="color:#0000CC;">.</span>Content<span style="color:#0000CC;">.</span>ReadAsStringAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    TResult result <span style="color:#0000CC;">=</span> await Task<span style="color:#0000CC;">.</span>Run<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        JsonConvert<span style="color:#0000CC;">.</span>DeserializeObject<span style="color:#0000CC;">&lt;</span>TResult<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>serialized<span style="color:#0000CC;">,</span> _serializerSettings<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> result<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用</span>CreateHttpClient方法，该方法返回HttpClient类的一个实例，并使用相应的头设置。 然后它向URI标识的资源提交异步POST请求，序列化的数据将以JSON格式发送，响应将存储在HttpResponseMessage实例中。 然后调用HandleResponse方法，如果响应不包含成功的HTTP状态代码，则会抛出异常。 然后，响应被读取为字符串，从JSON转换为CustomerBasket对象，并返回到BasketService。 有关CreateHttpClient方法的更多信息，请参阅</span><span><a href="#making_a_get_request"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>创建</span>GET<span>请求</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>RequestProvider类中的PostAsync方法调用HttpClient.PostAsync时，将调用Basket.API项目中的BasketController类中的Post方法，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code948')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code948" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>HttpPost<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> async Task<span style="color:#0000CC;">&lt;</span>IActionResult<span style="color:#0000CC;">&gt;</span> Post<span style="color:#0000CC;">(</span><span style="color:#0000CC;">[</span>FromBody<span style="color:#0000CC;">]</span>CustomerBasket value<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var basket <span style="color:#0000CC;">=</span> await _repository<span style="color:#0000CC;">.</span>UpdateBasketAsync<span style="color:#0000CC;">(</span>value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> Ok<span style="color:#0000CC;">(</span>basket<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法使用</span>RedisBasketRepository类的一个实例将购物篮数据保存到Redis缓存，并将其作为包含成功HTTP状态代码的响应消息和JSON格式化的CustomerBasket实例返回。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413725"></a><span style="font-family:宋体;"><span>进行删除请求</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;"><span>图</span>10-3<span>显示了对于</span><span>CheckoutView</span><span>，删除篮子微服务器中的篮子数据的类的交互。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/accessing-remote-data/Images/checkoutdata.png" alt="" height="471" width="930"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-3：从篮子微服务器中删除数据</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>调用结帐过程时，将调用</span>CheckoutViewModel类中的CheckoutAsync方法。 此方法在清除购物篮之前创建一个新订单，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code65')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code65" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task CheckoutAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    await _basketService<span style="color:#0000CC;">.</span>ClearBasketAsync<span style="color:#0000CC;">(</span>_shippingAddress<span style="color:#0000CC;">.</span>Id<span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> authToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用由</span>Autofac注入到CheckoutViewModel中的BasketService实例的ClearBasketAsync方法。 以下方法显示ClearBasketAsync方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code533')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code533" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task ClearBasketAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> guidUser<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> token<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">UriBuilder</span> builder <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">UriBuilder</span><span style="color:#0000CC;">(</span>GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>BasketEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    builder<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Path</span> <span style="color:#0000CC;">=</span> guidUser<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span> <span style="color:#0000CC;">=</span> builder<span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    await _requestProvider<span style="color:#0000CC;">.</span>DeleteAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法构建标识请求将要发送到的资源的</span>URI，并使用RequestProvider类来调用资源上的DELETE HTTP方法。 请注意，在身份验证过程中从IdentityServer获取的访问令牌需要向篮子微服务器授权请求。 有关授权的更多信息，请参阅</span><span><a href="#authorization"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授权</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下代码示例显示</span>RequestProvider<span>类中的</span><span>DeleteAsync</span><span>方法：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code460')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code460" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> async Task DeleteAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">uri</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span> token <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">""</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    HttpClient httpClient <span style="color:#0000CC;">=</span> CreateHttpClient<span style="color:#0000CC;">(</span>token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    await httpClient<span style="color:#0000CC;">.</span>DeleteAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">uri</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用</span>CreateHttpClient方法，该方法返回HttpClient类的一个实例，并使用相应的头设置。 然后它向由URI标识的资源提交异步DELETE请求。 有关CreateHttpClient方法的更多信息，请参阅</span><span><a href="#making_a_get_request"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>创建</span>GET<span>请求</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>RequestProvider类中的DeleteAsync方法调用HttpClient.DeleteAsync时，将调用Basket.API项目中的BasketController类中的Delete方法，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code597')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code597" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>HttpDelete<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{id}"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> Delete<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> id<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    _repository<span style="color:#0000CC;">.</span>DeleteBasketAsync<span style="color:#0000CC;">(</span>id<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>此方法使用</span>RedisBasketRepository<span>类的实例从</span><span>Redis</span><span>缓存中删除购物篮数据。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413726"></a><span style="font-family:宋体;"><span>缓存数据</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过将经常访问的数据缓存到位于应用程序附近的快速存储，可以提高应用程序的性能。如果快速存储位置比原始源更靠近应用程序，则缓存可以显着提高检索数据时的响应时间。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>最常见的缓存形式是直读缓存，应用程序通过引用缓存来检索数据。如果数据不在缓存中，则从数据存储中检索数据，并将其添加到缓存中。应用程序可以使用高速缓存备用模式实现直读缓存。此模式确定项目当前是否在缓存中。如果项目不在缓存中，则从数据存储中读取并将其添加到缓存。有关详细信息，请参阅</span>Microsoft Docs上的</span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/cache-aside"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Cache-Aside</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>模式。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：缓存经常读取的数据，并且不经常更改。该数据可以在应用程序首次检索时根据需要添加到缓存中。这意味着应用程序只需要从数据存储中提取一次数据，并且可以通过使用缓存来满足后续访问。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>分布式应用程序（如</span>eShopOnContainers参考应用程序）应提供以下缓存之一或两者：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>共享缓存，可由多个进程或计算机访问。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>私有缓存，数据在运行该应用的设备上本地保存。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用私有缓存，数据在本地运行在运行应用程序实例的设备上。有关eShopOnContainers参考应用程序使用的缓存的信息，请参阅</span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集群化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：将缓存视为可能随时消失的瞬态数据存储。确保数据在原始数据存储以及缓存中维护。如果缓存变得不可用，则丢失数据的机会被最小化。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413727"></a><span style="font-family:宋体;"><span>管理数据到期</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>期望缓存的数据将始终与原始数据一致是不切实际的。原始数据存储中的数据可能会在缓存后发生更改，导致缓存的数据变得过时。因此，应用程序应实施有助于确保缓存中的数据尽可能最新的策略，但也可以检测和处理缓存中的数据变得过时时出现的情况。大多数缓存机制使缓存能够被配置为过期数据，从而减少数据可能过期的时间。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：设置配置缓存时的默认过期时间。许多高速缓存实现了到期，如果在指定的时间段内没有访问数据，则会使数据无效并将其从高速缓存中删除。但是，在选择期满时必须小心。如果数据太短，数据将会过期，缓存的好处将会减少。如果时间太长，数据风险就会变淡。因此，到期时间应与使用数据的应用程序的访问模式相匹配。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当缓存数据到期时，应将其从缓存中移除，并且应用程序必须从原始数据存储中检索数据并将其放回到缓存中。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果允许数据保留一段时间，缓存可能会填满。因此，可能需要向缓存中添加新项目的请求来删除称为逐出的过程中的某些项目。缓存服务通常会以最近最少使用的方式驱逐数据。但是，还有其他驱逐政策，包括最近使用的和先到先得的。有关详细信息，请参阅</span>Microsoft Docs</span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/caching"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>缓存指导</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="caching_images"></a><span style="font-family:宋体;"><a name="_Toc495413728"></a><span>缓存图像</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序会消耗从被缓存中受益的远程产品图像。这些图像由Image控件和FFImageLoading库提供的CachedImage控件显示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Forms图像控件支持缓存下载的图像。默认情况下启用缓存，并将映像本地存储24小时。此外，可以使用CacheValidity属性配置到期时间。有关更多信息，请参阅Xamarin开发人员中心</span><span><a href="#Downloaded_Image_Caching"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>下载的图像缓存</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">FFImageLoading的CachedImage控件是Xamarin.Forms Image控件的替代品，提供了附加功能的附加属性。在这个功能中，控件提供可配置的缓存，同时支持错误和加载图像占位符。以下代码示例显示了eShopOnContainers移动应用程序如何在ProductTemplate中使用CachedImage控件，该控件是CatalogView中ListView控件使用的数据模板：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">&lt;ffimageloading:cachedimage   <span style="font-family:宋体;font-size:12.0000pt;"></span> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">  <br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code824')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code824" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>ffimageloading:CachedImage <br>
+</span> 
+			</li>
+			<li>
+				    Grid<span style="color:#0000CC;">.</span>Row<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"0"</span> <br>
+			</li>
+			<li>
+				    Source<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding PictureUri}"</span> <br>
+			</li>
+			<li>
+				    Aspect<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"AspectFill"</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>ffimageloading:CachedImage<span style="color:#0000CC;">.</span>LoadingPlaceholder<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>OnPlatform <br>
+			</li>
+			<li>
+				            x:TypeArguments<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"ImageSource"</span> <br>
+			</li>
+			<li>
+				            iOS<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"default_product"</span> <br>
+			</li>
+			<li>
+				            Android<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"default_product"</span> <br>
+			</li>
+			<li>
+				            WinPhone<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Assets/default_product.png"</span><span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ffimageloading:CachedImage<span style="color:#0000CC;">.</span>LoadingPlaceholder<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>ffimageloading:CachedImage<span style="color:#0000CC;">.</span>ErrorPlaceholder<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>OnPlatform <br>
+			</li>
+			<li>
+				            x:TypeArguments<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"ImageSource"</span> <br>
+			</li>
+			<li>
+				            iOS<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"noimage"</span> <br>
+			</li>
+			<li>
+				            Android<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"noimage"</span> <br>
+			</li>
+			<li>
+				            WinPhone<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Assets/noimage.png"</span><span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ffimageloading:CachedImage<span style="color:#0000CC;">.</span>ErrorPlaceholder<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ffimageloading:CachedImage<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">CachedImage控件将LoadPlaceholder和ErrorPlaceholder属性设置为平台特定的映像。 LoadPlaceholder属性指定要检索由Source属性指定的映像时要显示的映像，如果在尝试检索Source属性指定的映像时发生错误，则ErrorPlaceholder属性将指定要显示的映像。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>顾名思义，</span>CachedImage控件将CacheDuration属性的值指定的时间高速缓存设备上的远程映像。 当此属性值未显式设置时，将应用默认值30天。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413729"></a><span style="font-family:宋体;"><span>增加弹性</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>与远程服务和资源通信的所有应用程序必须对瞬态故障敏感。瞬态故障包括对服务的网络连接的瞬时丢失，服务的暂时不可用性，或服务繁忙时出现的超时。这些故障通常是自我纠正的，如果在适当的延迟之后重复操作，则可能会成功。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>即使在所有可预见的情况下已经彻底测试，瞬态故障也会对应用程序的感知质量产生巨大的影响。为了确保与远程服务通信的应用可靠运行，必须能够执行以下所有操作：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>发生故障时检测故障，并确定故障是否可能是短暂的。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果确定故障可能是短暂的并且跟踪操作重试的次数，则重试该操作。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>使用适当的重试策略，其中指定重试次数，每次尝试之间的延迟以及尝试失败后采取的操作。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>这种瞬态故障处理可以通过在实现重试模式的代码中包装所有访问远程服务的尝试来实现。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413730"></a><span style="font-family:宋体;"><span>重试模式</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果应用程序在尝试向远程服务发送请求时检测到故障，则可以通过以下任何方式处理该故障：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>重试操作。该应用程序可以立即重试失败的请求。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>延迟后重试操作。应用程序应该等待适当的时间，然后再重试请求。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>取消操作。应用程序应该取消操作并报告异常。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>应重新调整重试策略以符合应用程序的业务需求。例如，重要的是优化重试计数并重试间隔到正在尝试的操作。如果操作是用户交互的一部分，则重试间隔应该很短，只有少量重试尝试避免使用户等待响应。如果操作是长时间运行的工作流程的一部分，在取消或重新启动工作流程是昂贵或耗时的时候，在尝试之间等待更长时间并重试次数是合适的。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：在尝试之间进行最小延迟并进行大量重试的进攻性重试策略可能会降低靠近或处于容量状态的远程服务。此外，如果应用程序不断尝试执行失败操作，则此类重试策略也可能会影响应用程序的响应。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果一个请求在一些重试后仍然失败，那么应用程序最好防止进一步的请求进入同一个资源并报告失败。然后，一段时间后，应用程序可以向资源发出一个或多个请求，看看它们是否成功。有关更多信息，请参阅</span></span><span><a href="#circuit_breaker_pattern"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>断路器模式</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：永远不要实现无尽的重试机制。使用有限数量的重试，或实现断路器模式以允许服务恢复。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当进行</span>RESTful Web请求时，eShopOnContainers手机应用程序当前不执行重试模式。但是，由FFImageLoading库提供的CachedImage控件通过重试映像加载来支持瞬态故障处理。如果图像加载失败，将进一步尝试。尝试次数由RetryCount属性指定，重试次数将在RetryDelay属性指定的延迟后发生。如果没有明确设置这些属性值，那么它们的默认值将被应用 - 3为RetryCount属性，250ms为RetryDelay属性。有关CachedImage控件的更多信息，请参阅</span><span><a href="#caching_images"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>缓存图像</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers参考应用程序确实实现了重试模式。有关详细信息，包括如何将重试模式与HttpClient类组合的讨论，请参阅</span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集群化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关重试模式的详细信息，请参阅</span>Microsoft Docs上的</span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/retry"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>重试</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>模式。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="circuit_breaker_pattern"></a><span style="font-family:宋体;"><a name="_Toc495413731"></a><span>断路器模式</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在某些情况下，由于需要更长时间才能修复的预期事件，故障可能会发生。这些故障的范围可以从部分连接失效到服务完全失效。在这些情况下，应用程序重试不太可能成功的操作是毫无意义的，而应该接受操作失败并相应地处理此故障。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>断路器模式可以防止应用程序重复尝试执行可能失败的操作，同时还允许应用程序检测故障是否已解决。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：断路器模式的目的不同于重试模式。重试模式使应用程序可以重试一个操作，期望它会成功。断路器图案防止应用程序执行可能失败的操作。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>断路器作为可能失败的操作的代理。代理应监视最近发生的故障数量，并使用此信息来决定是否允许操作继续，或立即返回异常。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序目前没有实现断路器模式。但是，eShopOnContainers。有关更多信息，请参阅</span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集群化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：组合重试和断路器模式。应用程序可以通过使用重试模式通过断路器调用操作来组合重试和断路器模式。然而，重试逻辑应对断路器返回的任何异常敏感，如果断路器指示故障不是瞬态，则放弃重试尝试。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关断路器模式的更多信息，请参阅</span>Microsoft Docs上的</span><span><a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>断路器</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>模式。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413732"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>概要</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>许多现代的基于</span>Web的解决方案利用由Web服务器托管的Web服务来为远程客户端应用程序提供功能。 Web服务公开的操作构成Web API，并且客户端应用程序应该能够使用Web API，而不必知道API暴露的数据或操作的实现方式。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过将经常访问的数据缓存到位于应用程序附近的快速存储，可以提高应用程序的性能。应用程序可以使用高速缓存备用模式实现直读缓存。此模式确定项目当前是否在缓存中。如果项目不在缓存中，则从数据存储中读取并将其添加到缓存。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当与</span>Web API通信时，应用程序必须对瞬态故障敏感。瞬态故障包括对服务的网络连接的瞬时丢失，服务的暂时不可用性，或服务繁忙时出现的超时。这些故障经常是自我纠正的，如果在适当的延迟之后重复动作，那么可能会成功。因此，应用程序应该在实现一个瞬时故障处理机制的代码中包装所有访问Web API的尝试。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(38) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773372" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773370.html">使用Xamarin.Forms的企业应用程序模式（电子书）--认证和授权</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773373.html">使用Xamarin.Forms的企业应用程序模式（电子书）--单元测试</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

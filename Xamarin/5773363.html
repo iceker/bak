@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--MVVM-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773363.html">使用Xamarin.Forms的企业应用程序模式（电子书）--MVVM</a>
+            <em>2017-10-10 20:30:01</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">XAMarin.Forms的开发人员经验通常涉及在XAML中创建用户界面，然后添加在用户界面上运行的代码隐藏。 随着应用程序的修改和扩展的规模和范围，可能会出现复杂的维护问题。 这些问题包括UI控件和业务逻辑之间的紧密耦合，这增加了UI修改的成本，以及单元测试这些代码的难度。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Model-View-ViewModel（MVVM）模式有助于将应用程序的业务和表示逻辑与其用户界面（UI）进行干净分离。 在应用程序逻辑和UI之间保持干净的分离有助于解决许多开发问题，并可使应用程序更容易进行测试，维护和发展。 它还可以大大提高代码重用机会，并允许开发人员和UI设计人员在开发应用程序的各个部分时更轻松地协作。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="The_MVVM_Pattern"></a><span style="font-family:宋体;"><a name="_Toc495413644"></a>MVVM<span>模式</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">MVVM模式中有三个核心组件：模型，视图和视图模型。 每个都有不同的目的。 图2-1显示了三个组件之间的关系。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/mvvm/Images/mvvm.png" alt="" height="143" width="625"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>2-1<span>：</span><span>MVVM</span><span>模式</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>除了理解每个组件的责任外，了解它们之间如何相互作用也很重要。</span> <span>在高层次上，</span>“知道”视图模型，视图模型“知道”模型，但模型不知道视图模型，视图模型不知道视图。 因此，视图模型将视图与模型隔离，并允许模型独立于视图演变。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>使用</span>MVVM<span>模式的好处如下：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果存在封装现有业务逻辑的现有模型实现，则可能难以或有风险进行更改。</span> <span>在这种情况下，视图模型充当模型类的适配器，并使您能够避免对模型代码进行任何重大更改。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>开发人员可以为视图模型和模型创建单元测试，而不使用视图。</span> <span>视图模型的单元测试可以执行与视图所使用的完全相同的功能。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果视图完全在</span>XAML<span>中实现，则应用</span><span>UI</span><span>可以重新设计，而不用触摸代码。 因此，新版本的视图应该与现有的视图模型配合使用。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span></span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>设计人员和开发人员可以在开发过程中独立工作并兼并其组件。</span> <span>设计师可以专注于视图，而开发人员可以处理视图模型和模型组件。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>使用</span>MVVM的关键在于理解如何将应用程序代码归因于正确的类，以及了解类如何交互。 以下部分讨论MVVM模式中每个类的职责。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="View"></a><span style="font-family:宋体;"><a name="_Toc495413645"></a><span>视图</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图负责定义用户在屏幕上看到的结构，布局和外观。</span> <span>理想情况下，每个视图都是在</span>XAML中定义的，其代码隐藏的代码不包含业务逻辑。 然而，在某些情况下，代码隐藏可能包含实现XAML中难以表达的视觉行为的UI逻辑，例如动画。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>Xamarin.Forms应用程序中，视图通常是由</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Page/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>页面</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>派生或</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.ContentView/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">ContentView</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>派生类。</span> <span>但是，视图也可以由数据模板表示，数据模板指定用于在显示对象时用于可视化表示的</span>UI元素。 作为视图的数据模板没有任何代码隐藏，并且被设计为绑定到特定视图模型类型。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;"><span>提示：避免在代码隐藏中启用和禁用</span>UI<span>元素。</span></span><span style="font-family:Calibri;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>确保视图模型负责定义影响视图显示的某些方面的逻辑状态更改，例如命令是否可用，或指示操作正在等待。</span> <span>因此，通过绑定查看模型属性来启用和禁用</span>UI元素，而不是在代码隐藏中启用和禁用UI元素。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在视图模型上执行代码有几个选项，以响应视图上的交互，例如按钮点击或项目选择。</span> <span>如果控件支持命令，则控件的</span>Command属性可以与视图模型上的ICommand属性进行数据绑定。 当控件的命令被调用时，视图模型中的代码将被执行。 除了命令之外，还可以将行为附加到视图中的对象，并且可以侦听要调用的命令或要引发的事件。 作为响应，行为可以在视图模型或视图模型上的方法上调用ICommand。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="ViewModel"></a><span style="font-family:宋体;"><a name="_Toc495413646"></a><span>视图模型</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图模型实现视图可以绑定到的属性和命令，并通过更改通知事件通知视图任何状态更改。</span> <span>视图模型提供的属性和命令定义了</span>UI提供的功能，但视图决定了该功能的显示方式。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：使用异步操作保持</span>UI响应。 移动应用程序应该保持UI线程被阻止，以提高用户对性能的看法。 因此，在视图模型中，使用异步方法进行I / O操作，并引发事件异步通知属性更改的视图。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图模型还负责协调视图与所需模型类的交互。</span> <span>视图模型和模型类之间通常有一对多的关系。</span> <span>视图模型可能会选择将模型类直接暴露给视图，以便视图中的控件可以将数据直接绑定到它们。</span> <span>在这种情况下，模型类将需要设计为支持数据绑定和更改通知事件。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每个视图模型以视图可以轻松消费的形式提供来自模型的数据。</span> <span>为了实现这一点，视图模型有时执行数据转换。</span> <span>将此数据转换放置在视图模型中是一个好主意，因为它提供视图可绑定的属性。</span> <span>例如，视图模型可能会组合两个属性的值，以便视图更容易显示。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：在转换层中集中数据转换。</span> <span>还可以将转换器用作位于视图模型和视图之间的单独的数据转换层。</span> <span>这可能是必需的，例如，当数据需要视图模型不提供的特殊格式时。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>为了使视图模型参与与视图的双向数据绑定，其属性必须引发</span>PropertyChanged事件。 View模型通过实现INotifyPropertyChanged接口满足此要求，并在更改属性时引发PropertyChanged事件。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>对于集合，提供了视图友好的</span>ObservableCollection 。 此集合实现收集更改的通知，减轻开发人员在集合上实现INotifyCollectionChanged接口。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Model"></a><span style="font-family:宋体;"><a name="_Toc495413647"></a><span>模型</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>模型类是封装应用程序数据的非可视化类。</span> <span>因此，该模型可以被认为是表示应用程序的域模型，通常包括数据模型以及业务和验证逻辑。</span> <span>模型对象的示例包括数据传输对象（</span>DTO），普通旧CLR对象（POCO）以及生成的实体和代理对象。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>模型类通常与封装数据访问和缓存的服务或存储库结合使用。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="Connecting_View_Models_to_Views"></a><span style="font-family:宋体;"><a name="_Toc495413648"></a><span>将视图模型连接到视图</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>可以使用</span>Xamarin.Forms的数据绑定功能将视图模型连接到视图。 有许多方法可以用于构建视图和查看模型并在运行时关联它们。 这些方法分为两类，称为查看第一个组合，并且查看模型的第一个组合。 在视图第一个构图和视图模型之间选择第一个组合是一个偏好和复杂性的问题。 但是，所有方法都具有相同的目的，这是为了将视图模型分配给其BindingContext属性。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过查看第一个组合，应用程序在概念上由连接到它们所依赖的视图模型的视图组成。</span> <span>这种方法的主要好处是，它可以轻松构建松散耦合的单元可测试应用程序，因为视图模型不依赖于视图本身。</span> <span>通过跟踪其可视化结构，还可以轻松了解应用程序的结构，而不必跟踪代码执行，以了解如何创建和关联类。</span> <span>另外，视图第一个构造与</span>Xamarin.Forms导航系统一致，导航系统负责在导航时构建页面，这使得视图模型首先构成复杂且与平台不对齐。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>利用视图模型首先组合，应用程序在概念上由视图模型组成，服务负责定位视图模型的视图。</span> <span>对于某些开发人员来说，查看模型的第一个组合感觉更为自然，因为视图创建可以被抽象出来，从而使他们能够专注于应用程序的逻辑非</span>UI结构。 此外，它允许由其他视图模型创建视图模型。 然而，这种方法往往很复杂，而且很难理解应用程序的各个部分是如何创建和关联的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：保持视图模型和视图独立。</span> <span>视图对数据源中的属性的绑定应该是视图对其对应视图模型的主要依赖。</span> <span>具体来说，不要从视图模型中引用视图类型，例如</span>Button和ListView。 通过遵循本文概述的原则，可以隔离测试视图模型，从而通过限制范围降低软件缺陷的可能性。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下部分讨论将视图模型连接到视图的主要方法。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Creating_a_View_Model_Declaratively"></a><span style="font-family:宋体;"><a name="_Toc495413649"></a><span>以声明方式创建视图模型</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>最简单的方法是使视图在</span>XAML中声明性地实例化其对应的视图模型。 构建视图时，也将构建对应的视图模型对象。 以下代码示例演示了此方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code448')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code448" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>ContentPage <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> xmlns:local<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"clr-namespace:eShop"</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>ContentPage<span style="color:#0000CC;">.</span>BindingContext<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>local:LoginViewModel <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ContentPage<span style="color:#0000CC;">.</span>BindingContext<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ContentPage<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+</span> 
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>创建</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.ContentPage/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">ContentPage</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>时，将自动构造</span>LoginViewModel的一个实例，并将其设置为视图的</span><span><a href="https://developer.xamarin.com/api/property/Xamarin.Forms.BindableObject.BindingContext/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">BindingContext</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>视图模型的这种声明性构造和分配的优点在于它很简单，但缺点是它需要视图模型中的默认（无参数）构造函数。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Creating_a_View_Model_Programmatically"></a><span style="font-family:宋体;"><a name="_Toc495413650"></a><span>以编程方式创建视图模型</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图可以在代码隐藏文件中具有代码，导致将视图模型分配给其</span></span><span><a href="https://developer.xamarin.com/api/property/Xamarin.Forms.BindableObject.BindingContext/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">BindingContext</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>属性。</span> <span>这通常在视图的构造函数中完成，如以下代码示例所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code226')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code226" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> LoginView<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    InitializeComponent<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">BindingContext</span> <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> LoginViewModel<span style="color:#0000CC;">(</span>navigationService<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在视图的代码隐藏中，视图模型的编程构造和分配具有简单的优点。</span> <span>然而，这种方法的主要缺点是视图需要提供具有任何所需依赖性的视图模型。</span> <span>使用依赖注入容器可以帮助维护视图和视图模型之间松动的耦合。</span> <span>有关详细信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/dependency-injection/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>依赖注入</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Creating_a_View_Defined_as_a_Data_Templa"></a><span style="font-family:宋体;"><a name="_Toc495413651"></a><span>创建视图定义为数据模板</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图可以被定义为数据模板并与视图模型类型相关联。</span> <span>数据模板可以定义为资源，或者可以在显示视图模型的控件内部内联定义。</span> <span>控件的内容是视图模型实例，数据模板用于可视化表示。</span> <span>该技术是视图模型首先被实例化，之后是创建视图的情况的示例。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Automatically_Creating_a_View_Model_with"></a><span style="font-family:宋体;"><a name="_Toc495413652"></a><span>使用视图模型定位器自动创建视图模型</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图模型定位器是一个自定义类，用于管理视图模型的实例化及其与视图的关联。</span> <span>在</span>eShopOnContainers手机应用程序中，ViewModelLocator类具有附加属性AutoWireViewModel，用于将视图模型与视图相关联。 在视图的XAML中，此附加属性设置为true，表示视图模型应自动连接到视图，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:Calibri;"><span style="font-family:Calibri;"></span><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code533')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code533" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">viewModelBase<span style="color:#0000CC;">:</span>ViewModelLocator<span style="color:#0000CC;">.</span>AutoWireViewModel<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"true"</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">AutoWireViewModel属性是一个可绑定属性，初始化为false，当其值更改时调用OnAutoWireViewModelChanged事件处理程序。 此方法可解决视图的视图模型。 以下代码示例显示了如何实现：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code275')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code275" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">void</span> OnAutoWireViewModelChanged<span style="color:#0000CC;">(</span>BindableObject bindable<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> oldValue<span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> newValue<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var <span style="color:#FF0000;">view</span> <span style="color:#0000CC;">=</span> bindable <span style="color:#0000FF;">as</span> Element<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#FF0000;">view</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    var viewType <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">view</span><span style="color:#0000CC;">.</span>GetType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewName <span style="color:#0000CC;">=</span> viewType<span style="color:#0000CC;">.</span>FullName<span style="color:#0000CC;">.</span>Replace<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">".Views."</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">".ViewModels."</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewAssemblyName <span style="color:#0000CC;">=</span> viewType<span style="color:#0000CC;">.</span>GetTypeInfo<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">Assembly</span><span style="color:#0000CC;">.</span>FullName<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var viewModelName <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				        <span style="color:#FF0000;">CultureInfo</span><span style="color:#0000CC;">.</span>InvariantCulture<span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"{0}Model, {1}"</span><span style="color:#0000CC;">,</span> viewName<span style="color:#0000CC;">,</span> viewAssemblyName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    var viewModelType <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Type</span><span style="color:#0000CC;">.</span>GetType<span style="color:#0000CC;">(</span>viewModelName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>viewModelType <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    var viewModel <span style="color:#0000CC;">=</span> _container<span style="color:#0000CC;">.</span>Resolve<span style="color:#0000CC;">(</span>viewModelType<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">view</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">BindingContext</span> <span style="color:#0000CC;">=</span> viewModel<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OnAutoWireViewModelChanged方法尝试使用基于约定的方法来解析视图模型。 这个约定假设：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;"><span>视图模型与视图类型在同一装配体中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>视图位于</span>.Views<span>子命名空间中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>视图模型位于</span>.ViewModels<span>子命名空间中。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>查看型号与视图名称对应，并以</span>“<span>ViewModel</span><span>”结尾。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>最后，</span>OnAutoWireViewModelChanged方法将视图类型的</span><span><a href="https://developer.xamarin.com/api/property/Xamarin.Forms.BindableObject.BindingContext/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">BindingContext</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>设置为已解析的视图模型类型。</span> <span>有关解决视图模型类型的更多信息，请参阅</span></span><span><a href="#resolution"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>分辨率</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>这种方法的优点是，应用程序具有单个类，负责视图模型的实例化及其与视图的连接。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：使用视图模型定位器便于替代。</span> <span>视图模型定位器也可以用作替代依赖关系的替代点，例如单元测试或设计时间数据。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="Updating_Views_in_Response_to_Changes_in"></a><span style="font-family:宋体;"><a name="_Toc495413653"></a><span>更新视图以响应基础视图模型或模型中的更改</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图可访问的所有视图模型和模型类都应实现</span>INotifyPropertyChanged接口。 在视图模型或模型类中实现此接口允许类在底层属性值更改时向视图中的任何数据绑定控件提供更改通知。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>应该通过符合以下要求，为建立正确使用财产变更通知而设计的应用程序：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果公共属性的值更改，请始终提高</span>PropertyChanged<span>事件。不要假定提升</span><span>PropertyChanged</span><span>事件可以被忽略，因为知道如何发生</span><span>XAML</span><span>绑定。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>始终为视图模型或模型中的其他属性使用其值的任何计算属性提升</span>PropertyChanged<span>事件。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>始终在方法结束时引发</span>PropertyChanged<span>事件，使属性更改，或者对象知道处于安全状态。通过同步调用事件的处理程序来提高事件中断操作。如果在操作中发生这种情况，则当对象处于不安全的部分更新状态时，可能会将该对象暴露给回调函数。此外，可以通过</span><span>PropertyChanged</span><span>事件触发级联更改。级联更改通常要求更新完成，然后级联更改才能安全执行。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果属性不更改，则不要引发</span>PropertyChanged<span>事件。这意味着您必须在提高</span><span>PropertyChanged</span><span>事件之前比较旧值和新值。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果要初始化属性，请勿在视图模型的构造函数中引发</span>PropertyChanged<span>事件。此时视图中的数据绑定控件将不会订阅接收更改通知。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>在类的公共方法的单个同步调用中，不要使用相同的属性名称参数来提交多个</span>PropertyChanged<span>事件。例如，给定一个</span><span>NumberOfItems</span><span>属性，其后备存储是</span><span>_numberOfItems</span><span>字段，如果一个方法在执行循环期间增加</span><span>_numberOfItems</span><span>五十次，那么在所有工作完成后，它只应该在</span><span>NumberOfItems</span><span>属性上引发属性更改通知一次。对于异步方法，为异步连续链的每个同步段中的给定属性名称引发</span><span>PropertyChanged</span><span>事件。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用ExtendedBindableObject类提供更改通知，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code761')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code761" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">abstract</span> <span style="color:#0000FF;">class</span> ExtendedBindableObject <span style="color:#0000CC;">:</span> BindableObject <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> RaisePropertyChanged<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>Expression<span style="color:#0000CC;">&lt;</span>Func<span style="color:#0000CC;">&lt;</span>T<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">&gt;</span> property<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        var name <span style="color:#0000CC;">=</span> GetMemberInfo<span style="color:#0000CC;">(</span>property<span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>Name<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        OnPropertyChanged<span style="color:#0000CC;">(</span>name<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#FF0000;">MemberInfo</span> GetMemberInfo<span style="color:#0000CC;">(</span>Expression expression<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Form的</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.BindableObject/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">BindableObject</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>类实现了</span>INotifyPropertyChanged接口，并提供了一个</span><span><a href="https://developer.xamarin.com/api/member/Xamarin.Forms.BindableObject..d/p/System.String/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">OnPropertyChanged</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>方法。</span> ExtendedBindableObject类提供了RaisePropertyChanged方法来调用属性更改通知，这样做会使用BindableObject类提供的功能。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序中的每个视图模型类派生于ViewModelBase类，后者来自ExtendedBindableObject类。 因此，每个视图模型类都使用ExtendedBindableObject类中的RaisePropertyChanged方法提供属性更改通知。 以下代码示例显示了eShopOnContainers移动应用程序如何使用lambda表达式调用属性更改通知：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code128')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code128" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">bool</span> IsLogin <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    get <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">return</span> _isLogin<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    set <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _isLogin <span style="color:#0000CC;">=</span> value<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        RaisePropertyChanged<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> IsLogin<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>请注意，以这种方式使用</span>lambda表达式涉及到小的性能成本，因为必须为每个调用评估lambda表达式。 虽然性能成本很低，通常不会影响应用程序，但是在有许多变更通知时会产生成本。 然而，这种方法的好处是在重命名属性时提供编译时类型的安全性和重构支持。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="UI_Interaction_using_Commands_and_Behavi"></a><span style="font-family:宋体;"><a name="_Toc495413654"></a>UI<span>交互使用命令和行为</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在移动应用程序中，通常会响应用户操作（例如按钮单击）来调用操作，可以通过在代码隐藏文件中创建事件处理程序来实现。</span> <span>然而，在</span>MVVM模式中，实现操作的责任在于视图模型，并且应该避免将代码放在代码隐藏中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>命令提供了一种方便的方式来表示可以绑定到</span>UI中的控件的操作。 它们封装了实现该操作的代码，并且有助于使其与视图中的视觉表示脱钩。 Xamarin.Forms包括可声明地连接到命令的控件，当用户与控件交互时，这些控件将调用该命令。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>行为也允许控件声明地连接到一个命令。</span> <span>但是，可以使用行为来调用与控件引发的一系列事件相关联的操作。</span> <span>因此，行为解决许多与启用命令的控件相同的情况，同时提供更大程度的灵活性和控制。</span> <span>此外，还可以使用行为将命令对象或方法与未专门设计为与命令交互的控件相关联。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Implementing_Commands"></a><span style="font-family:宋体;"><a name="_Toc495413655"></a><span>实施命令</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>视图模型通常会暴露命令属性，用于绑定视图，即实现</span>ICommand接口的对象实例。 许多Xamarin.Forms控件提供了一个Command属性，它可以是绑定到视图模型提供的ICommand对象的数据。 ICommand接口定义了一个Execute方法，它封装了操作本身，一个CanExecute方法，它指示是否可以调用该命令，以及一个CanExecuteChanged事件发生在影响该命令是否应该执行的变化时。 由Xamarin.Forms提供的</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Command/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>命令</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>和</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Command/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>命令</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>类实现</span>ICommand接口，其中T是执行和CanExecute的参数的类型。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在视图模型中，对于</span>ICommand类型的视图模型中的每个公共属性应该有一个Command或Command 类型的对象。 Command或Command 构造函数需要在调用ICommand.Execute方法时调用的Action回调对象。 CanExecute方法是一个可选的构造函数参数，它是一个返回bool的Func。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下代码显示了如何通过指定注册表视图模型方法的委托来构建表示寄存器命令的</span>Command<span>实例：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:Calibri;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code408')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code408" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> ICommand RegisterCommand <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#0000FF;">new</span> Command<span style="color:#0000CC;">(</span>Register<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该命令通过返回对</span>ICommand的引用的属性暴露给该视图。 当在Command对象上调用Execute方法时，它只需通过Command构造函数中指定的委托将调用转换到视图模型中的方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>指定命令的执行委托时，可以通过使用</span>async和等待关键字的命令来调用异步方法。 这表示回调是一个任务，应该等待。 例如，以下代码显示了如何通过指定SignInAsync视图模型方法的委托来构建表示登录命令的Command实例：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:Calibri;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code679')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code679" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> ICommand SignInCommand <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#0000FF;">new</span> Command<span style="color:#0000CC;">(</span>async <span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> await SignInAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>参数可以通过使用</span>Command 类来实例化命令来传递给Execute和CanExecute操作。 例如，以下代码显示了如何使用Command 实例来指示NavigateAsync方法将需要一个类型为string的参数：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:Calibri;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code782')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code782" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> ICommand NavigateCommand <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#0000FF;">new</span> Command<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>NavigateAsync<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>Command和Command 类中，每个构造函数中的CanExecute方法的委托是可选的。 如果未指定委托，那么对于CanExecute，Command将返回true。 但是，视图模型可以通过调用Command对象上的ChangeCanExecute方法来指示命令的CanExecute状态的更改。 这会引发CanExecuteChanged事件。 绑定到命令的UI中的任何控件随后将更新其启用状态，以反映数据绑定命令的可用性。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="Invoking_Commands_from_a_View"></a><span style="font-family:宋体;"><a name="_Toc495413656"></a><span>从视图调用命令</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示了</span>LoginView中的</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Grid/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Grid</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>如何使用</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.TapGestureRecognizer/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">TapGestureRecognizer</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>实例绑定到</span>LoginViewModel类中的RegisterCommand：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"><span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code823')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code823" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Grid Grid<span style="color:#0000CC;">.</span>Column<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"1"</span> HorizontalOptions<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Center"</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Label Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"REGISTER"</span> TextColor<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"Gray"</span><span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>Grid<span style="color:#0000CC;">.</span>GestureRecognizers<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>TapGestureRecognizer Command<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding RegisterCommand}"</span> NumberOfTapsRequired<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"1"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Grid<span style="color:#0000CC;">.</span>GestureRecognizers<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>Grid<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+</span> 
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>也可以使用</span></span><span><a href="https://developer.xamarin.com/api/property/Xamarin.Forms.TapGestureRecognizer.CommandParameter/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">CommandParameter</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>属性来定义命令参数。</span> <span>预期参数的类型在</span>Execute和CanExecute目标方法中指定。 当用户与附加的控件进行交互时，TapGestureRecognizer将自动调用目标命令。 命令参数（如果提供）将作为参数传递给命令的执行委托。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="Implementing_Behaviors"></a><span style="font-family:宋体;"><a name="_Toc495413657"></a><span>实施行为</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>行为允许将功能添加到</span>UI控件中，而无需对其进行子类化。 相反，功能在一个行为类中实现，并附加到控件上，就像它是控件本身的一部分一样。 行为使您能够实现通常必须以代码隐写的代码，因为它可以直接与控件的API进行交互，使其可以简洁地附加到控件上，并打包以便重复使用 一个视图或应用程序 在MVVM的上下文中，行为是将控件连接到命令的有用方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过附加属性附加到控件的行为称为附加行为。</span> <span>然后，该行为可以使用其附加的元素的暴露的</span>API在视图的视觉树中向该控件或其他控件添加功能。 eShopOnContainers移动应用程序包含LineColorBehavior类，这是一个附加的行为。 有关此行为的详细信息，请参阅</span><span><a href="#displaying_validation_errors"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>显示验证错误</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Forms行为是从</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Behavior/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Behavior</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>或</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Behavior%3CT%3E/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Behavior </span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>类派生的类，其中</span>T是应用该行为的控件的类型。 这些类提供了OnAttachedTo和OnDetachingFrom方法，它们应该被覆盖，以提供当行为附加到控件并从控件分离时执行的逻辑。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>eShopOnContainers手机应用程序中，BindableBehavior 类派生于Behavior 类。 BindableBehavior 类的目的是为Xamarin.Forms行为提供一个基类，这些行为需要将行为的BindingContext设置为附加的控件。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">BindableBehavior 类提供了一个可覆盖的OnAttachedTo方法，用于设置行为的BindingContext，以及可以清理BindingContext的OverDable OnDetachingFrom方法。 此外，该类在AssociatedObject属性中存储对附加控件的引用。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序包括一个EventToCommandBehavior类，它可以响应于发生的事件执行命令。 该类派生自BindableBehavior 类，以便行为可以绑定并执行由Command属性指定的ICommand。 以下代码示例显示了EventToCommandBehavior类：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code799')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code799" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> EventToCommandBehavior <span style="color:#0000CC;">:</span> BindableBehavior<span style="color:#0000CC;">&lt;</span><span style="color:#FF0000;">View</span><span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">override</span> <span style="color:#0000FF;">void</span> OnAttachedTo<span style="color:#0000CC;">(</span><span style="color:#FF0000;">View</span> visualElement<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">base</span><span style="color:#0000CC;">.</span>OnAttachedTo<span style="color:#0000CC;">(</span>visualElement<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				        var events <span style="color:#0000CC;">=</span> AssociatedObject<span style="color:#0000CC;">.</span>GetType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>GetRuntimeEvents<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>ToArray<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>events<span style="color:#0000CC;">.</span>Any<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            _eventInfo <span style="color:#0000CC;">=</span> events<span style="color:#0000CC;">.</span>FirstOrDefault<span style="color:#0000CC;">(</span>e <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> e<span style="color:#0000CC;">.</span>Name <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> EventName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>_eventInfo <span style="color:#0000CC;">=</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				                <span style="color:#0000FF;">throw</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">ArgumentException</span><span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				                        <span style="color:#FF00FF;">"EventToCommand: Can't find any event named '{0}' on attached type"</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				                        EventName<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				            AddEventHandler<span style="color:#0000CC;">(</span>_eventInfo<span style="color:#0000CC;">,</span> AssociatedObject<span style="color:#0000CC;">,</span> OnFired<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">override</span> <span style="color:#0000FF;">void</span> OnDetachingFrom<span style="color:#0000CC;">(</span><span style="color:#FF0000;">View</span> <span style="color:#FF0000;">view</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>_handler <span style="color:#0000CC;">!</span><span style="color:#0000CC;">=</span> <span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            _eventInfo<span style="color:#0000CC;">.</span>RemoveEventHandler<span style="color:#0000CC;">(</span>AssociatedObject<span style="color:#0000CC;">,</span> _handler<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">base</span><span style="color:#0000CC;">.</span>OnDetachingFrom<span style="color:#0000CC;">(</span><span style="color:#FF0000;">view</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> AddEventHandler<span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				            <span style="color:#FF0000;">EventInfo</span> <span style="color:#FF0000;">eventInfo</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">object</span> item<span style="color:#0000CC;">,</span> Action<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">object</span><span style="color:#0000CC;">,</span> <span style="color:#FF0000;">EventArgs</span><span style="color:#0000CC;">&gt;</span> action<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				 <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> OnFired<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> sender<span style="color:#0000CC;">,</span> <span style="color:#FF0000;">EventArgs</span> <span style="color:#FF0000;">eventArgs</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OnAttachedTo和OnDetachingFrom方法用于注册和注销EventName属性中定义的事件的事件处理程序。 然后，当事件触发时，调用OnFired方法，执行该命令。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>使用</span>EventToCommandBehavior在事件触发时执行命令的优点是，该命令可以与未设计为与命令交互的控件相关联。 此外，这将移动事件处理代码来查看模型，在哪里可以进行单元测试。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="Invoking_Behaviors_from_a_View"></a><span style="font-family:宋体;"><a name="_Toc495413658"></a><span>从视图调用行为</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">EventToCommandBehavior对于将命令附加到不支持命令的控件特别有用。 例如，ProfileView使用EventToCommandBehavior来执行OrderDetailCommand，当</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.ListView/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">ListView</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>上的</span></span><span><a href="https://developer.xamarin.com/api/event/Xamarin.Forms.ListView.ItemTapped/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">ItemTapped</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>事件触发时列出用户的订单，如下面的代码所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:Calibri;"><span style="font-family:Calibri;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code890')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code890" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>ListView<span style="color:#0000CC;">&gt;</span> <br>
+</span> 
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span>ListView<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">&lt;</span>behaviors:EventToCommandBehavior <br>
+			</li>
+			<li>
+				            EventName<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"ItemTapped"</span> <br>
+			</li>
+			<li>
+				            Command<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding OrderDetailCommand}"</span> <br>
+			</li>
+			<li>
+				            EventArgsConverter<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{StaticResource ItemTappedEventArgsConverter}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ListView<span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">&lt;</span><span style="color:#0000CC;">/</span>ListView<span style="color:#0000CC;">&gt;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+</span> 
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在运行时，</span>EventToCommandBehavior将响应与ListView的交互。 当在ListView中选择一个项目时，ItemTapped事件将触发，这将在ProfileViewModel中执行OrderDetailCommand。 默认情况下，事件的事件参数将传递给该命令。 这个数据是通过EventArgsConverter属性中指定的转换器在源和目标之间传递的，它从ItemTappedEventArgs返回ListView的Item。 因此，当OrderDetailCommand被执行时，所选择的Order作为参数传递给注册的Action。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>有关行为的更多信息，请参阅</span>Xamarin<span>开发人员中心的行为。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="Summary"></a><span style="font-family:宋体;"><a name="_Toc495413659"></a><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:10.5000pt;">Model-View-ViewModel<span>（</span><span>MVVM</span><span>）模式有助于将应用程序的业务和表示逻辑与其用户界面（</span><span>UI</span><span>）进行干净分离。 在应用程序逻辑和</span><span>UI</span><span>之间保持干净的分离有助于解决许多开发问题，并可使应用程序更容易进行测试，维护和发展。 它还可以大大提高代码重用机会，并允许开发人员和</span><span>UI</span><span>设计人员在开发应用程序的各个部分时更轻松地协作。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:10.5000pt;"><span>使用</span>MVVM<span>模式，应用程序的</span><span>UI</span><span>和底层演示文稿和业务逻辑分为三个独立的类：该视图封装了</span><span>UI</span><span>和</span><span>UI</span><span>逻辑</span><span>; </span><span>视图模型封装了表示逻辑和状态</span><span>; </span><span>该模型封装了应用程序的业务逻辑和数据。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(39) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773363" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773362.html">使用Xamarin.Forms的企业应用程序模式（电子书）--介绍</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773364.html">使用Xamarin.Forms的企业应用程序模式（电子书）--依赖注入</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

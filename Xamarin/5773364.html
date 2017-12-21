@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--依赖注入-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773364.html">使用Xamarin.Forms的企业应用程序模式（电子书）--依赖注入</a>
+            <em>2017-10-10 20:32:05</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通常，在实例化对象时调用类构造函数，并将对象需要的任何值作为参数传递给构造函数。</span> <span>这是依赖注入的一个例子，具体称为构造函数注入。</span> <span>对象需要的依赖项被注入到构造函数中。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过将依赖项指定为接口类型，依赖注入可以使具体类型与依赖于这些类型的代码进行解耦。</span> <span>它通常使用一个容器来存储接口和抽象类型之间的注册和映射列表，以及实现或扩展这些类型的具体类型。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>还有其他类型的依赖注入，如属性设置器注入和方法调用注入，但它们不太常见。</span> <span>因此，本章将仅关注使用依赖注入容器执行构造函数注入。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="introduction_to_dependency_injection"></a><span style="font-family:宋体;"><a name="_Toc495413661"></a><span>依赖注入简介</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>依赖注入是反转控制（</span>IoC）模式的专门版本，其中被反转的关注点是获得所需依赖关系的过程。 使用依赖注入，另一个类负责在运行时将依赖关系注入对象。 以下代码示例显示了在使用依赖注入时ProfileViewModel类的结构：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span><br>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code808')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code808" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> ProfileViewModel <span style="color:#0000CC;">:</span> ViewModelBase <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> IOrderService _orderService<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> ProfileViewModel<span style="color:#0000CC;">(</span>IOrderService orderService<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _orderService <span style="color:#0000CC;">=</span> orderService<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">ProfileViewModel构造函数接收一个IOrderService实例作为参数，由另一个类注入。 ProfileViewModel类中唯一的依赖关系在接口类型上。 因此，ProfileViewModel类对于负责实例化IOrderService对象的类没有任何知识。 负责实例化IOrderService对象并将其插入到ProfileViewModel类中的类称为依赖注入容器。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>依赖注入容器通过提供实例化类实例的功能并根据容器的配置来管理其使用寿命来减少对象之间的耦合。</span> <span>在创建对象期间，容器将注入对象所需的任何依赖项。</span> <span>如果这些依赖关系尚未创建，容器首先创建并解析它们的依赖关系。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：依赖注入也可以使用工厂手动实施。</span> <span>但是，使用容器可以通过组装扫描提供诸如生命周期管理和注册等附加功能。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>使用依赖注入容器有几个优点：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器不需要一个类定位其依赖关系并管理其生命周期。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器允许映射实现的依赖关系而不影响类。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>通过允许依赖关系被嘲笑，容器便于测试。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>通过允许将新类轻松添加到应用程序中，容器增加了可维护性。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在使用</span>MVVM的Xamarin.Forms应用程序的上下文中，依赖注入容器通常用于注册和解析视图模型，以及注册服务并将其注入到视图模型中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有许多依赖注入容器可用，</span>eShopOnContainers移动应用程序使用Autofac来管理应用程序中的视图模型和服务类的实例化。 Autofac有助于构建松散耦合的应用程序，并提供依赖注入容器中常见的所有功能，包括注册类型映射和对象实例的方法，解析对象，管理对象生命周期，以及将依赖对象注入到其解析的对象的构造器中。 有关Autofac的更多信息，请参阅readthedocs.io上的</span><span><a href="http://autofac.readthedocs.io/en/latest/index.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Autofac</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>Autofac中，IContainer接口提供依赖注入容器。 图3-1显示了使用此容器时的依赖关系，它实例化IOrderService对象并将其注入到ProfileViewModel类中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/dependency-injection/Images/dependencyinjection.png" alt="" height="263" width="569"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>3-1<span>：使用依赖注入时的依赖关系</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在运行时，容器必须知道它应该实例化的</span>IOrderService接口的哪个实现，然后才能实例化一个ProfileViewModel对象。 这涉及到：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器决定如何实例化实现</span>IOrderService<span>接口的对象。 这被称为注册。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>实例化实现</span>IOrderService<span>接口的对象的容器和</span><span>ProfileViewModel</span><span>对象。 这被称为决议。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>最终，应用程序将完成使用</span>ProfileViewModel对象，它将可用于垃圾回收。 此时，如果其他类不共享相同的实例，垃圾收集器应该处理IOrderService实例。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>????</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;"><span>提示：写入容器不可知代码。</span> <span>始终尝试编写与容器无关的代码，以将应用与正在使用的特定依赖关系容器分离。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413662"></a><span style="font-family:宋体;"><span>注册</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在将依赖关系注入到对象之前，必须首先向容器注册依赖关系的类型。</span> <span>注册类型通常涉及将容器传递给实现接口的接口和具体类型。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>通过代码在容器中注册类型和对象有两种方法：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<ul>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;"><span>使用容器注册类型或映射。</span> <span>当需要时，容器将构建一个指定类型的实例。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+	<li>
+		<span style="font-family:Symbol;font-size:10.0000pt;"><span><span> </span></span></span><span style="font-family:宋体;"><span>将容器中的现有对象注册为单例。</span> <span>当需要时，容器将返回对现有对象的引用。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+	</li>
+</ul>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>????</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：依赖注射容器并不总是适合的。</span> <span>依赖注入引入了对小应用程序可能不合适或有用的额外的复杂性和要求。</span> <span>如果类没有任何依赖关系，或者不是其他类型的依赖关系，则将它放在容器中可能是没有意义的。</span> <span>另外，如果一个类具有一组依赖关系，并且永远不会改变，那么将它放在容器中可能是没有意义的。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>需要依赖注入的类型的注册应该通过应用程序中的单一方法执行，并且应该在应用程序的生命周期早期调用此方法，以确保应用程序知道其类之间的依赖关系。</span> <span>在</span>eShopOnContainers手机应用程序中，这是由ViewModelLocator类执行的，该类构建了IContainer对象，并且是应用程序中唯一持有该对象的引用的类。 以下代码示例显示了eShopOnContainers移动应用程序如何在ViewModelLocator类中声明IContainer对象：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code719')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code719" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">static</span> <span style="color:#FF0000;">IContainer</span> _container<span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>类型和实例在</span>ViewModelLocator类中的RegisterDependencies方法中注册。 这是通过首先创建一个ContainerBuilder实例来实现的，该实例在以下代码示例中被演示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code303')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code303" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var builder <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> ContainerBuilder<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>然后将类型和实例注册到</span>ContainerBuilder对象，并且以下代码示例演示了最常见的类型注册形式</span><span style="font-family:宋体;"><span>：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code842')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code842" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var builder <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> ContainerBuilder<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此处显示的</span>RegisterType方法将接口类型映射到具体类型。 它通知容器来实例化一个RequestProvider对象，当它实例化一个需要通过构造函数注入IRequestProvider的对象。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>也可以直接注册具体类型，而不需要从接口类型映射，如下面的代码示例所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code882')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code882" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">builder<span style="color:#0000CC;">.</span>RegisterType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;">ProfileViewModel<span>类型解析后，容器将注入其所需的依赖关系。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Autofac还允许实例注册，其中容器负责维护对类型的单例实例的引用。 例如，以下代码示例显示了当ProfileViewModel实例需要IOrderService实例时，eShopOnContainers移动应用程序如何注册具体类型：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code783')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code783" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">builder<span style="color:#0000CC;">.</span>RegisterType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#0000FF;">As</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>SingleInstance<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此处显示的</span>RegisterType方法将接口类型映射到具体类型。 SingleInstance方法配置注册，以便每个从属对象接收相同的共享实例。 因此，只有一个OrderService实例将存在于容器中，该对象由需要通过构造函数注入IOrderService的对象共享。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>实例注册也可以使用</span>RegisterInstance<span>方法执行，这在下面的代码示例中被证明：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code779')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code779" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">builder<span style="color:#0000CC;">.</span>RegisterInstance<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> OrderMockService<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#0000FF;">As</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>这里显示的</span>RegisterInstance方法创建一个新的OrderMockService实例并将其注册到容器。 因此，容器中只存在一个OrderMockService实例，该实例由需要通过构造函数注入IOrderService的对象共享。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>按照类型和实例注册，必须构建</span>IContainer<span>对象，这在以下代码示例中进行了说明：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code450')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code450" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">_container <span style="color:#0000CC;">=</span> builder<span style="color:#0000CC;">.</span>Build<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>ContainerBuilder实例上调用Build方法构建一个新的依赖关系注入容器，其中包含已经创建的注册。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>????</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：将</span>IContainer视为不可变的。 虽然Autofac提供了更新方法来更新现有容器中的注册，但应尽可能避免调用此方法。 建造容器后，修改容器是有风险的，特别是在容器已被使用的情况下。</span><span style="font-family:宋体;"><span>有关详细信息，请参阅在</span>readthedocs.io<span>上</span></span><span><a href="#consider-a-container-as-immutable"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>考虑容器为不变的</span></span></u></a></span><span style="font-family:宋体;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="resolution"></a><span style="font-family:宋体;"><a name="_Toc495413663"></a><span>解析度</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注册一个类型后，可以将其解析或注入为依赖关系。</span> <span>当一个类型被解析并且容器需要创建一个新的实例时，它会将任何依赖项注入实例。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>一般来说，当一个类型被解决时，三件事之一发生：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:宋体;font-size:10.5000pt;"><span>1.<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果类型尚未注册，容器将引发异常。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:宋体;font-size:10.5000pt;"><span>2.<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果类型已经注册为单例，容器返回单例实例。</span> <span>如果这是第一次调用该类型，容器将在需要时创建它，并保留对它的引用。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:宋体;font-size:10.5000pt;"><span>3.<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>如果类型未注册为单例，容器返回一个新实例，并且不保留对它的引用。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下代码示例显示如何解决先前已注册</span>Autofac<span>的</span><span>RequestProvider</span><span>类型：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code843')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code843" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var requestProvider <span style="color:#0000CC;">=</span> _container<span style="color:#0000CC;">.</span>Resolve<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在此示例中，要求</span>Autofac解析IRequestProvider类型的具体类型以及任何依赖关系。 通常，当需要特定类型的实例时调用Resolve方法。 有关控制已解析对象的生命周期的信息，请参阅</span><span><a href="#managing_the_lifetime_of_resolved_objects"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>管理已解决对象的生命周期</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>以下代码示例显示了</span>eShopOnContainers<span>移动应用程序如何实例化查看模型类型及其依赖关系：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code211')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code211" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var viewModel <span style="color:#0000CC;">=</span> _container<span style="color:#0000CC;">.</span>Resolve<span style="color:#0000CC;">(</span>viewModelType<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在此示例中，要求</span>Autofac解析所请求视图模型的视图模型类型，容器还将解析任何依赖关系。 解析ProfileViewModel类型时，解析的依赖关系是一个IOrderService对象。 因此，Autofac首先构造一个OrderService对象，然后将其传递给ProfileViewModel类的构造函数。 有关eShopOnContainers移动应用程序如何构建视图模型并将其与视图相关联的更多信息，请参阅</span><span><a href="#automatically_creating_a_view_model_with_a_view_model_locator"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用视图模型定位器自动创建视图模型</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：使用容器注册和解析类型具有性能成本，因为容器使用反射来创建每种类型，特别是如果为应用程序中的每个页面导航重建依赖关系。</span> <span>如果有很多或很深的依赖，创造的成本可以显着增加。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="managing_the_lifetime_of_resolved_object"></a><span style="font-family:宋体;"><a name="_Toc495413664"></a><span>管理已解决对象的使用寿命</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注册类型后，</span>Autofac的默认行为是在每次解析类型时创建一个新的注册类型实例，或者依赖机制将实例注入其他类时。 在这种情况下，容器不会保留对已解析对象的引用。 但是，注册实例时，Autofac的默认行为是将对象的生命周期作为单例进行管理。 因此，当容器在范围内时，该实例保留在范围内，并且当容器超出范围并被垃圾回收时，或者当代码明确地处置该容器时，该实例将被保留。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Autofac实例范围可用于指定Autofac从注册类型创建的对象的单例行为。 Autofac实例作用域管理由容器实例化的对象生命周期。 RegisterType方法的默认实例范围是InstancePerDependency作用域。 但是，SingleInstance范围可以与RegisterType方法一起使用，以便容器在调用Resolve方法时创建或返回类型的单例实例。 以下代码示例显示了如何指示Autofac创建NavigationService类的单例实例：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span> 
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code447')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code447" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">builder<span style="color:#0000CC;">.</span>RegisterType<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span><span style="color:#0000FF;">As</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>SingleInstance<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">INavigationService接口第一次解析后，容器将创建一个新的NavigationService对象，并保留对它的引用。 在INavigationService接口的任何后续分辨率上，容器返回对先前创建的NavigationService对象的引用。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>注意：当容器被处理时，</span>SingleInstance scope<span>将配置创建的对象。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;">Autofac<span>包含其他实例范围。 有关更多信息，请参阅</span><span>readthedocs.io</span><span>上的</span></span><span><a href="http://autofac.readthedocs.io/en/latest/lifetime/instance-scope.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>实例范围</span></span></u></a></span><span style="font-family:宋体;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413665"></a><span style="font-family:宋体;"><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>依赖注入可以使具体类型与依赖于这些类型的代码进行解耦。</span> <span>它通常使用一个容器来存储接口和抽象类型之间的注册和映射列表，以及实现或扩展这些类型的具体类型。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Autofac有助于构建松散耦合的应用程序，并提供依赖注入容器中常见的所有功能，包括注册类型映射和对象实例的方法，解析对象，管理对象生命周期以及将依赖对象注入到其解析的对象的构造器中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(39) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773364" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773363.html">使用Xamarin.Forms的企业应用程序模式（电子书）--MVVM</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773365.html">使用Xamarin.Forms的企业应用程序模式（电子书）--松散耦合部件之间的通信</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

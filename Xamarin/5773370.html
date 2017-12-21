@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--认证和授权-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773370.html">使用Xamarin.Forms的企业应用程序模式（电子书）--认证和授权</a>
+            <em>2017-10-10 20:39:56</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>身份验证是从用户获取身份验证凭证（例如姓名和密码）以及根据权限验证这些凭据的过程。如果凭据有效，则提交凭据的实体被认为是认证身份。一旦身份被认证，授权过程将确定该身份是否可以访问给定的资源。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>将认证和授权集成到与</span>ASP.NET MVC Web应用程序进行通信的Xamarin.Forms应用程序中有许多方法，包括使用ASP.NET核心身份，外部身份验证提供程序（如Microsoft，Google，Facebook或Twitter）以及身份验证中间件。 eShopOnContainers移动应用程序通过使用IdentityServer 4的</span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>式身份微服务执行身份验证和授权。移动应用程序从</span>IdentityServer请求安全令牌，用于验证用户或访问资源。对于IdentityServer代表用户发出令牌，用户必须登录到IdentityServer。但是，IdentityServer不提供用于验证的用户界面或数据库。因此，在eShopOnContainers参考应用程序中，ASP.NET Core Identity用于此目的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413704"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>认证</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当应用程序需要知道当前用户的身份时，需要进行身份验证。</span> ASP.NET Core的用于识别用户的主要机制是ASP.NET核心身份成员系统，它将用户信息存储在由开发人员配置的数据存储中。通常，此数据存储将是EntityFramework存储，尽管可以使用自定义存储或第三方软件包在Azure存储，DocumentDB或其他位置存储身份信息。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>对于使用本地用户数据存储的身份验证方案，并通过</span>Cookie（通过ASP.NET MVC Web应用程序通常）在请求之间保留身份信息，ASP.NET核心身份是一种合适的解决方案。 然而，Cookie并不总是持久和传输数据的自然手段。 例如，暴露从移动应用程序访问的RESTful端点的ASP.NET Core Web应用程序通常需要使用承载令牌身份验证，因为在这种情况下不能使用Cookie。 然而，可以容易地检索承载令牌并将其包括在由移动应用程序制作的web请求的授权头文件中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413705"></a><span style="font-family:宋体;"><span>使用</span>IdentityServer</span><span style="font-family:Calibri;">4</span><span style="font-family:宋体;"><span>发出承载令牌</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">IdentityServer 4是用于ASP.NET Core的开源OpenID Connect和OAuth 2.0框架，可用于许多身份验证和授权方案，包括为本地ASP.NET核心身份用户颁发安全令牌。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>OpenID Connect和OAuth 2.0非常相似，但负责不同。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OpenID Connect是OAuth 2.0协议之上的认证层。 OAuth 2是允许应用程序从安全令牌服务请求访问令牌并使用它们与API进行通信的协议。该委托减少了客户端应用程序和API中的复杂性，因为可以集中验证和授权。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OpenID Connect和OAuth 2.0的组合结合了身份验证和API访问的两个基本安全问题，IdentityServer 4是这些协议的实现。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在使用</span>eShopOnContainers参考应用程序的直接客户端到微服务器通信的应用中，可以使用充当安全令牌服务（STS）的专用认证微服务器来认证用户，如图9-1所示。有关直接客户端与微服务器通信的更多信息，请参阅</span><span><a href="#communication_between_client_and_microservices"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>客户端与微服务器之间的通信</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/authentication-and-authorization/Images/authentication.png" alt="" height="276" width="1341"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>9-1：通过专用认证微服务进行认证</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序与身份微服务通信，身份微服务使用IdentityServer 4进行身份验证，并对API进行访问控制。因此，移动应用程序会从IdentityServer请求令牌，用于验证用户或访问资源：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>使用</span>IdentityServer<span>验证用户是通过移动应用程序实现的，请求身份令牌，代表认证过程的结果。最低限度，它包含用户的标识符，以及用户如何和何时进行身份验证的信息。它还可以包含其他身份数据。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>通过</span>IdentityServer<span>访问资源是通过移动应用程序实现的，请求访问令牌，允许访问</span><span>API</span><span>资源。客户端请求访问令牌并将其转发到</span><span>API</span><span>。访问令牌包含有关客户端和用户（如果存在）的信息。然后，</span><span>API</span><span>使用该信息来授权访问其数据。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：客户端必须先注册到</span>IdentityServer才能请求令牌。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413706"></a><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"><span>将</span>IdentityServer添加到Web应用程序</span></b><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>为了使</span>ASP.NET Core Web应用程序使用IdentityServer 4，必须将其添加到Web应用程序的Visual Studio解决方案中。 有关详细信息，请参阅IdentityServer文档中的</span><span><a href="https://identityserver4.readthedocs.io/en/release/quickstarts/0_overview.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>安装和概述</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>一旦</span>IdentityServer包含在Web应用程序的Visual Studio解决方案中，就必须将它添加到Web应用程序的HTTP请求处理流水线中，以便它可以向OpenID Connect和OAuth 2.0端点提供请求。 这在Web应用程序的Startup类中的Configure方法中实现，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code779')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code779" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> Configure<span style="color:#0000CC;">(</span> <br>
+</span> 
+			</li>
+			<li>
+				    IApplicationBuilder app<span style="color:#0000CC;">,</span> IHostingEnvironment env<span style="color:#0000CC;">,</span> ILoggerFactory loggerFactory<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    app<span style="color:#0000CC;">.</span>UseIdentity<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>Web应用程序的HTTP请求处理流程中订购事宜。 因此，IdentityServer必须在实现登录屏幕的UI框架之前添加到管道中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413707"></a><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"><span>配置</span>IdentityServer</span></b><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>应通过调用</span>services.AddIdentityServer方法在Web应用程序的Startup类中的ConfigureServices方法中配置IdentityServer，如eShopOnContainers参考应用程序的以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code1')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code1" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> ConfigureServices<span style="color:#0000CC;">(</span>IServiceCollection <span style="color:#FF0000;">services</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">services</span><span style="color:#0000CC;">.</span>AddIdentityServer<span style="color:#0000CC;">(</span>x <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> x<span style="color:#0000CC;">.</span>IssuerUri <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"null"</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>AddSigningCredential<span style="color:#0000CC;">(</span>Certificate<span style="color:#0000CC;">.</span>Get<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>AddAspNetIdentity<span style="color:#0000CC;">&lt;</span>ApplicationUser<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>AddConfigurationStore<span style="color:#0000CC;">(</span>builder <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				            builder<span style="color:#0000CC;">.</span>UseSqlServer<span style="color:#0000CC;">(</span>connectionString<span style="color:#0000CC;">,</span> options <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				                options<span style="color:#0000CC;">.</span>MigrationsAssembly<span style="color:#0000CC;">(</span>migrationsAssembly<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span>AddOperationalStore<span style="color:#0000CC;">(</span>builder <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				            builder<span style="color:#0000CC;">.</span>UseSqlServer<span style="color:#0000CC;">(</span>connectionString<span style="color:#0000CC;">,</span> options <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				                options<span style="color:#0000CC;">.</span>MigrationsAssembly<span style="color:#0000CC;">(</span>migrationsAssembly<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#FF0000;">Services</span><span style="color:#0000CC;">.</span>AddTransient<span style="color:#0000CC;">&lt;</span>IProfileService<span style="color:#0000CC;">,</span> ProfileService<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>调用</span>services.AddIdentityServer方法后，调用其他流畅的API来配置以下内容：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>用于签名的证书。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>用户可能要求访问的</span>API<span>和身份资源。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>将连接请求令牌的客户端。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;">ASP.NET<span>核心标识。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：动态加载</span>IdentityServer 4配置。 IdentityServer 4的API允许从配置对象的内存列表中配置IdentityServer。 在eShopOnContainers参考应用程序中，这些内存中的集合被硬编码到应用程序中。 但是，在生产场景中，可以从配置文件或数据库中动态加载它们。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关配置</span>IdentityServer以使用ASP.NET核心标识的信息，请参阅IdentityServer文档中的</span><span><a href="https://identityserver4.readthedocs.io/en/release/quickstarts/6_aspnet_identity.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用</span>ASP.NET<span>核心身份</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413708"></a><b><span style="font-family:宋体;font-weight:bold;font-size:16.0000pt;"><span>配置</span>API<span>资源</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>配置</span>API资源时，AddInMemoryApiResources方法需要一个IEnumerable 集合。 以下代码示例显示了在eShopOnContainers参考应用程序中提供此集合的GetApis方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code131')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code131" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#FF0000;">IEnumerable</span><span style="color:#0000CC;">&lt;</span>ApiResource<span style="color:#0000CC;">&gt;</span> GetApis<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">new</span> List<span style="color:#0000CC;">&lt;</span>ApiResource<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> ApiResource<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"orders"</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"Orders Service"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> ApiResource<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"basket"</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"Basket Service"</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法指定</span>IdentityServer应保护订单和篮子API。 因此，当调用这些API时，将需要IdentityServer管理的访问令牌。 有关ApiResource类型的更多信息，请参阅IdentityServer 4文档中的</span><span><a href="#refapiresource"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">API<span>资源</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413709"></a><b><span style="font-family:宋体;font-weight:bold;font-size:16.0000pt;"><span>配置身份资源</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>配置身份资源时，</span>AddInMemoryIdentityResources方法需要一个IEnumerable 集合。 身份资源是诸如用户ID，姓名或电子邮件地址之类的数据。 每个身份资源都有一个唯一的名称，并且可以分配任意的索赔类型，然后将其包含在用户的身份令牌中。 以下代码示例显示了在eShopOnContainers参考应用程序中提供此集合的GetResources方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code134')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code134" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#FF0000;">IEnumerable</span><span style="color:#0000CC;">&lt;</span>IdentityResource<span style="color:#0000CC;">&gt;</span> GetResources<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">new</span> List<span style="color:#0000CC;">&lt;</span>IdentityResource<span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> IdentityResources<span style="color:#0000CC;">.</span>OpenId<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> IdentityResources<span style="color:#0000CC;">.</span>Profile<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OpenID Connect规范指定了一些标准身份资源。 最低要求是提供了为用户发布唯一ID的支持。 这是通过公开IdentityResources.OpenId身份资源来实现的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>IdentityResources类支持OpenID Connect规范（openid，email，配置文件，电话和地址）中定义的所有范围。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">IdentityServer还支持定义自定义身份资源。 有关详细信息，请参阅IdentityServer文档中的</span><span><a href="#defining-custom-identity-resources"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>定义自定义身份资源</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>有关</span>IdentityResource类型的更多信息，请参阅IdentityServer 4文档中的</span><span><a href="https://identityserver4.readthedocs.io/en/release/reference/identity_resource.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Identity Resource</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413710"></a><span style="font-family:宋体;"><span>配置客户端</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>客户端是可以从</span>IdentityServer请求令牌的应用程序。 通常，必须至少为每个客户端定义以下设置：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>唯一的客户端</span>ID</span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>允许与令牌服务的交互（称为授权类型）。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>身份和访问令牌发送到的位置（称为重定向</span>URI<span>）。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>允许客户端访问的资源列表（称为范围）。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>配置客户端时，</span>AddInMemoryClients方法需要一个IEnumerable 集合。 以下代码示例显示了在eShopOnContainers参考应用程序中提供此集合的GetClients方法中eShopOnContainers移动应用程序的配置：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code390')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code390" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#FF0000;">IEnumerable</span><span style="color:#0000CC;">&lt;</span>Client<span style="color:#0000CC;">&gt;</span> GetClients<span style="color:#0000CC;">(</span>Dictionary<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">,</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span> clientsUrl<span style="color:#0000CC;">)</span><br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">new</span> List<span style="color:#0000CC;">&lt;</span>Client<span style="color:#0000CC;">&gt;</span><br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">new</span> Client<br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				            ClientId <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"xamarin"</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            ClientName <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"eShop Xamarin OpenId Client"</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            AllowedGrantTypes <span style="color:#0000CC;">=</span> GrantTypes<span style="color:#0000CC;">.</span>Hybrid<span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            ClientSecrets <span style="color:#0000CC;">=</span><br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				                <span style="color:#0000FF;">new</span> Secret<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"secret"</span><span style="color:#0000CC;">.</span><span style="color:#FF0000;">Sha256</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            RedirectUris <span style="color:#0000CC;">=</span> <span style="color:#0000CC;">{</span> clientsUrl<span style="color:#0000CC;">[</span><span style="color:#FF00FF;">"Xamarin"</span><span style="color:#0000CC;">]</span> <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            RequireConsent <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            RequirePkce <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            PostLogoutRedirectUris <span style="color:#0000CC;">=</span> <span style="color:#0000CC;">{</span> $<span style="color:#FF00FF;">"{clientsUrl["</span>Xamarin<span style="color:#FF00FF;">"]}/Account/Redirecting"</span> <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            AllowedCorsOrigins <span style="color:#0000CC;">=</span> <span style="color:#0000CC;">{</span> <span style="color:#FF00FF;">"http://eshopxamarin"</span> <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            AllowedScopes <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> List<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				                IdentityServerConstants<span style="color:#0000CC;">.</span>StandardScopes<span style="color:#0000CC;">.</span>OpenId<span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				                IdentityServerConstants<span style="color:#0000CC;">.</span>StandardScopes<span style="color:#0000CC;">.</span>Profile<span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				                IdentityServerConstants<span style="color:#0000CC;">.</span>StandardScopes<span style="color:#0000CC;">.</span>OfflineAccess<span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				                <span style="color:#FF00FF;">"orders"</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				                <span style="color:#FF00FF;">"basket"</span><br>
+			</li>
+			<li>
+				            <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            AllowOfflineAccess <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				            AllowAccessTokensViaBrowser <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span><br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此配置指定以下属性的数据：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;">ClientId<span>：客户端的唯一</span><span>ID</span><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">ClientName</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：客户端显示名称，用于记录和同意屏幕。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">AllowedGrantTypes</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定客户端如何与</span>IdentityServer<span>进行交互。有关详细信息，请参阅</span></span><span><a href="#configuring_the_authentication_flow"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置身份验证流</span></span></u></a></span><span style="font-family:宋体;font-size:10.5000pt;"><span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">ClientSecrets</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定从令牌端点请求令牌时使用的客户机密码。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">RedirectUris</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定允许的</span>URI<span>返回令牌或授权码。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">RequireConsent</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定是否需要同意屏幕。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">RequirePkce</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定使用授权码的客户端是否必须发送证明密钥。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">PostLogoutRedirectUris</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定注销后重定向到的允许</span>URI<span>。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">AllowedCorsOrigins</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定客户端的来源，以便</span>IdentityServer<span>可以允许来自原点的跨原点呼叫。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">AllowedScopes</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定客户端可访问的资源。默认情况下，客户端无权访问任何资源。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:12.0000pt;">AllowOfflineAccess</span><span style="font-family:宋体;font-size:10.5000pt;"><span>：指定客户端是否可以请求刷新令牌。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<h3>
+	<a name="configuring_the_authentication_flow"></a><span style="font-family:宋体;"><a name="_Toc495413711"></a><span>配置认证流程</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>客户端和</span>IdentityServer之间的认证流程可以通过在Client.AllowedGrantTypes属性中指定授权类型进行配置。 OpenID Connect和OAuth 2.0规范定义了许多认证流程，包括：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Implicit. </span><span style="font-family:宋体;font-size:10.5000pt;"><span>此流程针对基于浏览器的应用程序进行了优化，并且应该用于仅用于用户身份验证，或者用于认证和访问令牌请求。所有令牌都通过浏览器传输，因此不允许使用诸如刷新令牌等高级功能。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>授权码。该流程提供了与浏览器前端通道相反的方式来检索后端通道上的令牌，同时也支持客户端身份验证。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:Calibri;font-size:10.5000pt;">Hybrid.</span><span style="font-family:宋体;font-size:10.5000pt;"><span>此流程是隐式和授权代码授权类型的组合。身份令牌通过浏览器通道传输，并包含签名的协议响应以及其他工件，如授权码。响应成功验证后，应使用后端通道来检索访问和刷新令牌。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：使用混合身份验证流程。混合身份验证流程减轻了许多适用于浏览器通道的攻击，并且是想要检索访问令牌（也可能刷新令牌）的本机应用程序的推荐流程。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关认证流程的更多信息，请参阅</span>IdentityServer 4文档中的</span><span><a href="https://identityserver4.readthedocs.io/en/release/topics/grant_types.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授予类型</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413712"></a><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"><span>执行认证</span></span></b><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>对于</span>IdentityServer代表用户发出令牌，用户必须登录到IdentityServer。 但是，IdentityServer不提供用于验证的用户界面或数据库。 因此，在eShopOnContainers参考应用程序中，ASP.NET Core Identity用于此目的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用IdentityServer与混合身份验证流程进行身份验证，如图9-2所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/authentication-and-authorization/Images/sign-in.png" alt="" height="424" width="1608"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>9-2：登录过程的高级概述</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>对</span>进行登录请求：5105 / connect / authorize。 成功认证后，IdentityServer返回包含授权码和身份令牌的认证响应。 然后将授权码发送到：5105 / connect / token，它以访问，身份和刷新令牌进行响应。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序通过向“基本端点”发送请求：5105 / connect / endsession，并附加参数，从IdentityServer注销。 退出发生后，IdentityServer通过发送注销重定向URI回到移动应用程序进行响应。 图9-3说明了这个过程。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/authentication-and-authorization/Images/sign-out.png" alt="" height="276" width="1448"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>9-3：注册过程的高级概述</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>eShopOnContainers移动应用中，与IdentityServer的通信由IdentityService类执行，该类实现了IIdentityService接口。 该接口指定实现类必须提供CreateAuthorizationRequest，CreateLogoutRequest和GetTokenAsync方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413713"></a><b><span style="font-family:宋体;font-weight:bold;font-size:16.0000pt;"><span>登录</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当用户点击</span>LoginView上的LOGIN按钮时，LoginViewModel类中的SignInCommand将被执行，后者又执行SignInAsync方法。 以下代码示例显示了此方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code855')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code855" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task SignInAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    LoginUrl <span style="color:#0000CC;">=</span> _identityService<span style="color:#0000CC;">.</span>CreateAuthorizationRequest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    IsLogin <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用</span>IdentityService类中的CreateAuthorizationRequest方法，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code114')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code114" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> CreateAuthorizationRequest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span><br>
+			</li>
+			<li>
+				    <span style="color:#FF9900;">// Create URI to authorization endpoint</span><br>
+			</li>
+			<li>
+				    var authorizeRequest <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> AuthorizeRequest<span style="color:#0000CC;">(</span>GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>IdentityEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#FF9900;">// Dictionary with values for the authorize request</span><br>
+			</li>
+			<li>
+				    var dic <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> Dictionary<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">,</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"client_id"</span><span style="color:#0000CC;">,</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>ClientId<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"client_secret"</span><span style="color:#0000CC;">,</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>ClientSecret<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"response_type"</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"code id_token"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"scope"</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"openid profile basket orders locations marketing offline_access"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"redirect_uri"</span><span style="color:#0000CC;">,</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>IdentityCallback<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"nonce"</span><span style="color:#0000CC;">,</span> <span style="color:#FF0000;">Guid</span><span style="color:#0000CC;">.</span>NewGuid<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"N"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"code_challenge"</span><span style="color:#0000CC;">,</span> CreateCodeChallenge<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"code_challenge_method"</span><span style="color:#0000CC;">,</span> <span style="color:#FF00FF;">"S256"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#FF9900;">// Add CSRF token to protect against cross-site request forgery attacks.</span><br>
+			</li>
+			<li>
+				    var currentCSRFToken <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Guid</span><span style="color:#0000CC;">.</span>NewGuid<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"N"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				    dic<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"state"</span><span style="color:#0000CC;">,</span> currentCSRFToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    var authorizeUri <span style="color:#0000CC;">=</span> authorizeRequest<span style="color:#0000CC;">.</span>Create<span style="color:#0000CC;">(</span>dic<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> authorizeUri<span style="color:#0000CC;">;</span><br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法创建</span>IdentityServer</span><span><a href="https://identityserver4.readthedocs.io/en/release/endpoints/authorize.html"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授权端点</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>的</span>URI，并附带必需的参数。 授权端点在作为用户设置公开的基础端点的端口5105处的/ connect / authorize。 有关用户设置的更多信息，请参阅</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置管理</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：通过实施</span>OAuth的代码交换证明码（PKCE）扩展，eShopOnContainers移动应用程序的攻击面减少了。 PKCE保护授权代码在被拦截时被使用。 这通过客户端生成秘密验证器来实现，该验证器在其授权请求中传递其哈希值，并且在兑换授权代码时被呈现为未刷新。 有关PKCE的更多信息，请参阅互联网工程任务组网站上的</span><span><a href="https://tools.ietf.org/html/rfc7636"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">OAuth<span>公共客户端进行代码交换的证明密钥</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>返回的</span>URI存储在LoginViewModel类的LoginUrl属性中。 当IsLogin属性变为true时，LoginView中的WebView变得可见。 WebView数据将其Source属性绑定到LoginViewModel类的LoginUrl属性，因此当LoginUrl属性设置为IdentityServer的授权端点时，会向IdentityServer进行登录请求。 当IdentityServer收到此请求并且用户未通过身份验证时，WebView将被重定向到配置的登录页面，如图9-4所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/authentication-and-authorization/Images/login.png" alt="" height="479" width="674"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>9-4：WebView显示的登录页面</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>登录完成后，</span>WebView将被重定向到返回URI。 此</span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.WebView/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">WebView</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>导航将导致</span>LoginViewModel类中的NavigateAsync方法被执行，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code671')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code671" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task NavigateAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">url</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    var authResponse <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> AuthorizeResponse<span style="color:#0000CC;">(</span><span style="color:#FF0000;">url</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrWhiteSpace<span style="color:#0000CC;">(</span>authResponse<span style="color:#0000CC;">.</span>Code<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        var userToken <span style="color:#0000CC;">=</span> await _identityService<span style="color:#0000CC;">.</span>GetTokenAsync<span style="color:#0000CC;">(</span>authResponse<span style="color:#0000CC;">.</span>Code<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">string</span> accessToken <span style="color:#0000CC;">=</span> userToken<span style="color:#0000CC;">.</span>AccessToken<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrWhiteSpace<span style="color:#0000CC;">(</span>accessToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            Settings<span style="color:#0000CC;">.</span>AuthAccessToken <span style="color:#0000CC;">=</span> accessToken<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            Settings<span style="color:#0000CC;">.</span>AuthIdToken <span style="color:#0000CC;">=</span> authResponse<span style="color:#0000CC;">.</span>IdentityToken<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				            await NavigationService<span style="color:#0000CC;">.</span>NavigateToAsync<span style="color:#0000CC;">&lt;</span>MainViewModel<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            await NavigationService<span style="color:#0000CC;">.</span>RemoveLastFromBackStackAsync<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该方法解析包含在返回</span>URI中的认证响应，并且假设存在有效的授权码，它向IdentityServer的令牌端点发出请求，传递授权码，PKCE密码验证器和其他必需的参数。令牌端点在作为用户设置公开的基本端点的端口5105处的/ connect / token。有关用户设置的更多信息，请参阅</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置管理</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：验证返回</span>URI。虽然eShopOnContainers移动应用程序不验证返回URI，但最佳做法是验证返回URI是否指向已知位置，以防止打开重定向攻击。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果令牌端点接收到有效的授权码和</span>PKCE密码验证器，则它使用访问令牌，身份令牌和刷新令牌进行响应。然后将访问令牌（允许访问API资源）和身份令牌存储为应用程序设置，并执行页面导航。因此，eShopOnContainers手机应用程序的整体效果是这样的：只要用户能够使用IdentityServer成功验证，就会导航到MainView页面，该页面是TabbedPage，它将CatalogView显示为其选定的选项卡。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关页面导航的信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/navigation/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>有关</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.WebView/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">WebView</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>导航如何导致执行视图模型方法的信息，请参阅</span></span><span><a href="#invoking_navigation_using_behaviors"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用行为调用导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>有关应用程序设置的信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置管理</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>eShopOnContainers还允许在应用程序配置为在SettingsView中使用模拟服务时进行模拟登录。 在此模式下，应用程序不与IdentityServer通信，而是允许用户使用任何凭据登录。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h3>
+	<a name="_Toc495413714"></a><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"><span>登出</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:16.0000pt;"></span></b> 
+</h3>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当用户点击</span>ProfileView中的LOG OUT按钮时，将执行ProfileViewModel类中的LogoutCommand，然后执行LogoutAsync方法。 此方法执行页面导航到LoginView页面，将LogoutParameter实例设置为true作为参数。 有关在页面导航期间传递参数的更多信息，请参阅</span><span><a href="#passing_parameters_during_navigation"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>在导航期间传递参数</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当创建和导航视图时，将执行视图关联视图模型的</span>InitializeAsync方法，然后执行LoginViewModel类的Logout方法，该方法显示在以下代码示例中：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code68')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code68" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> Logout<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var authIdToken <span style="color:#0000CC;">=</span> Settings<span style="color:#0000CC;">.</span>AuthIdToken<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var logoutRequest <span style="color:#0000CC;">=</span> _identityService<span style="color:#0000CC;">.</span>CreateLogoutRequest<span style="color:#0000CC;">(</span>authIdToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span><span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrEmpty<span style="color:#0000CC;">(</span>logoutRequest<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#FF9900;">// Logout </span><br>
+			</li>
+			<li>
+				        LoginUrl <span style="color:#0000CC;">=</span> logoutRequest<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法调用</span>IdentityService类中的CreateLogoutRequest方法，将从应用程序设置检索的身份令牌作为参数传递。 有关应用程序设置的更多信息，请参阅</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置管理</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>以下代码示例显示了</span>CreateLogoutRequest方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code357')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code357" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> CreateLogoutRequest<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> token<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">return</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}?id_token_hint={1}&amp;post_logout_redirect_uri={2}"</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>LogoutEndpoint<span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        token<span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>LogoutCallback<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法使用所需的参数创建</span>IdentityServer终端会话端点的URI。终端会话端点在作为用户设置公开的基础端点的端口5105上的/ connect / endsession。有关用户设置的更多信息，请参阅配置管理。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>返回的</span>URI存储在LoginViewModel类的LoginUrl属性中。当IsLogin属性为true时，LoginView中的WebView是可见的。 WebView数据将其Source属性绑定到LoginViewModel类的LoginUrl属性，因此当LoginUrl属性设置为IdentityServer的结束会话端点时，会向IdentityServer发出注销请求。当IdentityServer收到此请求时，只要用户已登录，就会退出登录。使用由ASP.NET Core的cookie身份验证中间件管理的cookie跟踪身份验证。因此，退出IdentityServer将删除身份验证cookie，并将注销重定向URI发送回客户端。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在移动应用中，</span>WebView将被重定向到注销重定向URI。此WebView导航将导致LoginViewModel类中的NavigateAsync方法被执行，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code683')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code683" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> async Task NavigateAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">url</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    Settings<span style="color:#0000CC;">.</span>AuthAccessToken <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Empty<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Settings<span style="color:#0000CC;">.</span>AuthIdToken <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Empty<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    IsLogin <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    LoginUrl <span style="color:#0000CC;">=</span> _identityService<span style="color:#0000CC;">.</span>CreateAuthorizationRequest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法从应用程序设置中清除身份令牌和访问令牌，并将</span>IsLogin属性设置为false，这将导致LoginView页面上的WebView变得不可见。 最后，LoginUrl属性设置为IdentityServer的授权端点的URI，并具有必需的参数，以备下次用户启动登录时进行。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关页面导航的信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/navigation/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>有关</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.WebView/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">WebView</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>导航如何导致执行视图模型方法的信息，请参阅</span></span><span><a href="#invoking_navigation_using_behaviors"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用行为调用导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span> <span>有关应用程序设置的信息，请参阅</span></span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>配置管理</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>eShopOnContainers还允许在应用配置为在SettingsView中使用模拟服务时进行模拟退出。 在此模式下，应用程序不与IdentityServer通信，而是从应用程序设置中清除任何存储的令牌。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="authorization"></a><span style="font-family:宋体;"><a name="_Toc495413715"></a><span>授权</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>认证后，</span>ASP.NET核心Web API通常需要授权访问，这允许服务将API提供给某些经过身份验证的用户，但并非全部。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过将</span>Authorize属性应用于控制器或操作来限制对ASP.NET Core MVC路由的访问，这将限制对控制器的访问或对已验证用户的操作，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code317')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code317" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Authorize<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> BasketController <span style="color:#0000CC;">:</span> Controller <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>如果未经授权的用户尝试访问使用</span>Authorize属性标记的控制器或操作，则MVC框架返回401（未授权的）HTTP状态代码。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：可以在</span>Authorize属性上指定参数，以将API限制为特定用户。 有关详细信息，请参阅Microsoft文档中心的</span><span><a href="https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>授权</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">IdentityServer可以集成到授权工作流程中，以便访问令牌提供控制授权。 这种方法如图9-5所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/authentication-and-authorization/Images/authorization.png" alt="" height="672" width="1341"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>9-5：访问令牌授权eShopOnContainers移动应用程序与身份微服务通信，并请求访问令牌作为身份验证过程的一部分。 访问令牌随后转发到订单和篮子微服务器公开的API作为访问请求的一部分。 访问令牌包含有关客户端和用户的信息。 然后，API使用该信息来授权访问其数据。 有关如何配置IdentityServer以保护API的信息，请参阅配置</span><span><a href="#configuring-api-resources"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">API<span>资源</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413716"></a><span style="font-family:宋体;"><span>配置</span>IdentityServer<span>执行授权</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>要使用</span>IdentityServer执行授权，其授权中间件必须添加到Web应用程序的HTTP请求管道中。 中间件被添加到Web应用程序的启动类中的ConfigureAuth方法中，该类从Configure方法调用，并在eShopOnContainers参考应用程序的以下代码示例中进行了说明：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code220')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code220" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">protected</span> <span style="color:#0000FF;">virtual</span> <span style="color:#0000FF;">void</span> ConfigureAuth<span style="color:#0000CC;">(</span>IApplicationBuilder app<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var identityUrl <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">Configuration</span><span style="color:#0000CC;">.</span>GetValue<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"IdentityUrl"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    app<span style="color:#0000CC;">.</span>UseIdentityServerAuthentication<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> IdentityServerAuthenticationOptions <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        Authority <span style="color:#0000CC;">=</span> identityUrl<span style="color:#0000CC;">.</span>ToString<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        ScopeName <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"basket"</span><span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				        RequireHttpsMetadata <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">false</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该方法确保只能使用有效的访问令牌来访问</span>API。 中间件验证传入令牌以确保它从受信任的发行者发送，并验证该令牌是有效的，以便与接收它的API一起使用。 因此，浏览订购或购物篮控制器将返回401（未授权的）HTTP状态代码，表示需要访问令牌。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：在将</span>MVC与app.UseMvc（）或app.UseMvcWithDefaultRoute（）相加之前，IdentityServer的授权中间件必须添加到Web应用程序的HTTP请求管道中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413717"></a><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"><span>对</span>API进行访问请求</span></b><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在向订购和购买微服务请求时，在认证过程中从</span>IdentityServer获取的访问令牌必须包含在请求中，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code119')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code119" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var authToken <span style="color:#0000CC;">=</span> Settings<span style="color:#0000CC;">.</span>AuthAccessToken<span style="color:#0000CC;">;</span> <br>
+</span> 
+			</li>
+			<li>
+				Order <span style="color:#0000CC;">=</span> await _ordersService<span style="color:#0000CC;">.</span>GetOrderAsync<span style="color:#0000CC;">(</span><span style="color:#FF0000;">Convert</span><span style="color:#0000CC;">.</span>ToInt32<span style="color:#0000CC;">(</span>order<span style="color:#0000CC;">.</span>OrderNumber<span style="color:#0000CC;">)</span><span style="color:#0000CC;">,</span> authToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>访问令牌存储为应用程序设置，并从平台特定的存储中检索并包含在调用</span>OrderService类中的GetOrderAsync方法中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>类似地，当向</span>IdentityServer保护的API发送数据时，必须包含访问令牌，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code181')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code181" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">var authToken <span style="color:#0000CC;">=</span> Settings<span style="color:#0000CC;">.</span>AuthAccessToken<span style="color:#0000CC;">;</span> <br>
+</span> 
+			</li>
+			<li>
+				await _basketService<span style="color:#0000CC;">.</span>UpdateBasketAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">new</span> CustomerBasket <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    BuyerId <span style="color:#0000CC;">=</span> userInfo<span style="color:#0000CC;">.</span>UserId<span style="color:#0000CC;">,</span> <br>
+			</li>
+			<li>
+				    Items <span style="color:#0000CC;">=</span> BasketItems<span style="color:#0000CC;">.</span>ToList<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span><span style="color:#0000CC;">,</span> authToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>访问令牌是从特定于平台的存储中检索的，并且包含在对</span>BasketService类中UpdateBasketAsync方法的调用中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序中的RequestProvider类使用HttpClient类向eShopOnContainers参考应用程序公开的RESTful API发出请求。 当要求授权的订购和购物篮API请求时，请求中必须包含有效的访问令牌。 这通过将访问令牌添加到HttpClient实例的头部来实现，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code944')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code944" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;">httpClient<span style="color:#0000CC;">.</span>DefaultRequestHeaders<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Authorization</span> <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> AuthenticationHeaderValue<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"Bearer"</span><span style="color:#0000CC;">,</span> token<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">HttpClient类的DefaultRequestHeaders属性公开了每个请求发送的头文件，并将访问令牌添加到以字符串承载为前缀的授权标头中。 当请求发送到RESTful API时，将提取并验证授权头的值，以确保它从受信任的颁发者发送，并用于确定用户是否有权限调用接收它的API。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关</span>eShopOnContainers移动应用程序如何进行Web请求的更多信息，请参阅</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/accessing-remote-data/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>访问远程数据</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413718"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>概要</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>将认证和授权集成到与</span>ASP.NET MVC Web应用程序通信的Xamarin.Forms应用程序中有许多方法。 eShopOnContainers移动应用程序通过使用IdentityServer 4的</span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>式身份微服务来执行身份验证和授权。</span>IdentityServer是一种用于ASP.NET Core的开源OpenID Connect和OAuth 2.0框架，与ASP.NET Core Identity集成以执行承载令牌身份验证。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>移动应用程序从</span>IdentityServer请求安全令牌，用于验证用户或访问资源。 访问资源时，访问令牌必须包含在需要授权的API的请求中。 IdentityServer的中间件验证传入的访问令牌，以确保它们从受信任的发行者发送，并且它们与接收它们的API一起使用是有效的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(8) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773370" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773369.html">使用Xamarin.Forms的企业应用程序模式（电子书）--容器化微服务</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773372.html">使用Xamarin.Forms的企业应用程序模式（电子书）--访问远程数据</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

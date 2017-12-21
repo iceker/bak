@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--配置管理-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773368.html">使用Xamarin.Forms的企业应用程序模式（电子书）--配置管理</a>
+            <em>2017-10-10 20:36:39</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>设置允许将配置应用程序行为的数据与代码分离，允许在不重新构建应用程序的情况下更改行为。有两种类型的设置：应用设置和用户设置。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>应用设置是应用程序创建和管理的数据。它可以包括固定</span>Web服务端点，API密钥和运行时状态等数据。应用设置与应用的存在有关，只对该应用有意义。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>用户设置是影响应用行为的应用的可自定义设置，不需要频繁的重新调整。例如，应用程序可能会让用户指定从哪里检索数据，以及如何在屏幕上显示数据。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xamarin.Forms包含可用于存储设置数据的持久字典。可以使用</span><span><a href="https://developer.xamarin.com/api/property/Xamarin.Forms.Application.Properties/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Application.Current.Properties</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>属性访问此字典，并且在应用进入睡眠状态时保存放入其中的任何数据，并在应用程序恢复或重新启动时恢复。此外，</span></span><span><a href="https://developer.xamarin.com/api/type/Xamarin.Forms.Application/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Application</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>类还具有一个</span></span><span><a href="https://developer.xamarin.com/api/member/Xamarin.Forms.Application.SavePropertiesAsync()/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">SavePropertiesAsync</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>方法，允许应用程序在需要时保存其设置。有关此字典的更多信息，请参阅</span>Xamarin开发人员中心的</span><span><a href="#Properties_Dictionary"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>属性字典</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>使用</span>Xamarin.Forms持久性字典存储数据的缺点是它不容易被数据绑定。因此，eShopOnContainers手机应用程序使用可从NuGet获取的Xam.Plugins.Settings库。在使用每个平台提供的本地设置管理的同时，该库提供一致的，类型安全的跨平台方法，用于持久化和检索应用程序和用户设置。此外，使用数据绑定访问库公开的设置数据是直接的。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：虽然</span>Xam.Plugin.Settings库可以存储应用程序和用户设置，但两者之间没有区别。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413693"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>创建一个设置类</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当使用</span>Xam.Plugins.Settings库时，应创建一个静态类，该类将包含应用程序所需的应用程序和用户设置。 以下代码示例显示了eShopOnContainers移动应用程序中的Settings类：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code499')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code499" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">class</span> Settings <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">static</span> ISettings AppSettings <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        get <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">return</span> CrossSettings<span style="color:#0000CC;">.</span>Current<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>可以通过由</span>Xam.Plugins.Settings库提供的ISettings API读取和写入设置。 该库提供了一个可用于访问API的单例，CrossSettings.Current，应用程序的设置类应通过ISettings属性公开此单例。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：使用</span>Plugin.Settings和Plugin.Settings.Abstractions命名空间的指令应该添加到需要访问Xam.Plugins.Settings库类型的类中。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413694"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>添加设置</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每个设置由一个键，一个默认值和一个属性组成。</span> <span>以下代码示例显示了用于设置</span>eShopOnContainers移动应用程序连接到的在线服务的基本URL的用户设置的所有三个项目：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code149')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code149" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">class</span> Settings <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">const</span> <span style="color:#0000FF;">string</span> IdUrlBase <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"url_base"</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">readonly</span> <span style="color:#0000FF;">string</span> UrlBaseDefault <span style="color:#0000CC;">=</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>BaseEndpoint<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">static</span> <span style="color:#0000FF;">string</span> UrlBase <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        get <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            <span style="color:#0000FF;">return</span> AppSettings<span style="color:#0000CC;">.</span>GetValueOrDefault<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>IdUrlBase<span style="color:#0000CC;">,</span> UrlBaseDefault<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        set <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            AppSettings<span style="color:#0000CC;">.</span>AddOrUpdateValue<span style="color:#0000CC;">&lt;</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span>IdUrlBase<span style="color:#0000CC;">,</span> value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>键始终是定义键名称的常量字符串，设置的默认值是所需类型的静态可读值。</span> <span>如果检索到未设置的设置，则提供默认值可确保有效值可用。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">UrlBase static属性使用ISettings API中的两个方法来读取或写入设置值。 ISettings.GetValueOrDefault方法用于从平台特定的存储中检索设置的值。 如果没有为该设置定义值，则会检索其默认值。 类似地，ISettings.AddOrUpdateValue方法用于将设置的值持续到平台特定的存储。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>而是在</span>Settings类中定义默认值，UrlBaseDefault字符串从GlobalSetting类获取其值。 以下代码示例显示了此类中的BaseEndpoint属性和UpdateEndpoint方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code379')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code379" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> GlobalSetting <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> BaseEndpoint <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        get <span style="color:#0000CC;">{</span> <span style="color:#0000FF;">return</span> _baseEndpoint<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				        set <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            _baseEndpoint <span style="color:#0000CC;">=</span> value<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				            UpdateEndpoint<span style="color:#0000CC;">(</span>_baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> UpdateEndpoint<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> baseEndpoint<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        RegisterWebsite <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/Account/Register"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        CatalogEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5101"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        OrdersEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5102"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        BasketEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5103"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        IdentityEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/connect/authorize"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        UserInfoEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/connect/userinfo"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        TokenEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/connect/token"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        LogoutEndpoint <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/connect/endsession"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        IdentityCallback <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/xamarincallback"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        LogoutCallback <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>Format<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"{0}:5105/Account/Redirecting"</span><span style="color:#0000CC;">,</span> baseEndpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每次设置</span>BaseEndpoint属性时，都会调用UpdateEndpoint方法。 此方法更新一系列属性，所有这些属性都基于由“设置”类提供的UrlBase用户设置，这些设置表示eShopOnContainers移动应用程序连接到的不同端点。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413695"></a><span style="font-family:宋体;"><span>数据绑定到用户设置</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在</span>eShopOnContainers手机应用程序中，SettingsView显示两个用户设置。 这些设置允许配置应用程序是否从部署为Docker容器的微服务中检索数据，还是应用程序是否应从不需要Internet连接的模拟服务中检索数据。 当选择从容器化的微服务检索数据时，必须指定微服务器的基本端点URL。 图7-1显示了用户选择从</span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>式微服务检索数据时的</span>SettingsView。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/configuration-management/Images/settings-endpoint.png" alt="" height="243" width="556"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>7-1<span>：</span><span>eShopOnContainers</span><span>手机应用程序公开的用户设置</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>数据绑定可用于检索和设置</span>Settings类公开的设置。 这是通过对视图绑定的控件实现的，该视图绑定到查看模型属性，反过来访问“设置”类中的属性，并且如果设置值已更改则提高属性已更改的通知。 有关eShopOnContainers移动应用程序如何构建视图模型并将其与视图关联的信息，请参阅</span><span><a href="#automatically_creating_a_view_model_with_a_view_model_locator"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>使用视图模型定位器自动创建视图模型</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>以下代码示例显示了来自</span>SettingsView的Entry控件，允许用户输入集装式微服务的基本端点URL：<br>
+<br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code859')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code859" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">&lt;</span>Entry Text<span style="color:#0000CC;">=</span><span style="color:#FF00FF;">"{Binding Endpoint, Mode=TwoWay}"</span> <span style="color:#0000CC;">/</span><span style="color:#0000CC;">&gt;</span></span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<span style="font-family:宋体;font-size:12.0000pt;"></span> 
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此</span>Entry控件使用双向绑定绑定到SettingsViewModel类的Endpoint属性。 以下代码示例显示了Endpoint属性：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code488')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code488" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">string</span> <span style="color:#FF0000;">Endpoint</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    get <span style="color:#0000CC;">{</span> <span style="color:#0000FF;">return</span> _endpoint<span style="color:#0000CC;">;</span> <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    set <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _endpoint <span style="color:#0000CC;">=</span> value<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">!</span><span style="color:#0000FF;">string</span><span style="color:#0000CC;">.</span>IsNullOrEmpty<span style="color:#0000CC;">(</span>_endpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				            UpdateEndpoint<span style="color:#0000CC;">(</span>_endpoint<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				        RaisePropertyChanged<span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#FF0000;">Endpoint</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>Endpoint属性被设置时，调用UpdateEndpoint方法，前提是提供的值是有效的，并且引发了属性更改的通知。 以下代码示例显示UpdateEndpoint方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code575')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code575" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">private</span> <span style="color:#0000FF;">void</span> UpdateEndpoint<span style="color:#0000CC;">(</span><span style="color:#0000FF;">string</span> <span style="color:#FF0000;">endpoint</span><span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    Settings<span style="color:#0000CC;">.</span>UrlBase <span style="color:#0000CC;">=</span> <span style="color:#FF0000;">endpoint</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法使用用户输入的基本端点</span>URL值更新Settings类中的UrlBase属性，从而使其保持平台特定的存储。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>SettingsView导航到，SettingsViewModel类中的InitializeAsync方法被执行。 以下代码示例显示了此方法：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code278')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code278" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">override</span> Task InitializeAsync<span style="color:#0000CC;">(</span><span style="color:#0000FF;">object</span> navigationData<span style="color:#0000CC;">)</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				    <span style="color:#FF0000;">Endpoint</span> <span style="color:#0000CC;">=</span> Settings<span style="color:#0000CC;">.</span>UrlBase<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该方法将</span>Endpoint属性设置为Settings类中UrlBase属性的值。 访问UrlBase属性会导致Xam.Plugins.Settings库从平台特定的存储中检索设置值。 有关如何调用InitializeAsync方法的信息，请参阅在</span><span><a href="#passing_parameters_during_navigation"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航期间传递参数</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该机制确保每当用户导航到</span>SettingsView时，将从平台特定的存储中检索用户设置，并通过数据绑定进行呈现。 然后，如果用户更改设置值，数据绑定将确保它们立即保留回平台特定的存储。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413696"></a><span style="font-family:宋体;"><span>概要</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>设置允许将配置应用程序行为的数据与代码分离，允许在不重新构建应用程序的情况下更改行为。</span> <span>应用程序设置是应用程序创建和管理的数据，用户设置是影响应用程序行为的应用程序的可自定义设置，不需要频繁重新调整。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Xam.Plugins.Settings库提供一致的，类型安全的跨平台方法，用于持久化和检索应用程序和用户设置，数据绑定可用于访问使用库创建的设置。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(35) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773368" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773367.html">使用Xamarin.Forms的企业应用程序模式（电子书）--验证</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773369.html">使用Xamarin.Forms的企业应用程序模式（电子书）--容器化微服务</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

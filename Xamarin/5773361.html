@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--前言-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773361.html">使用Xamarin.Forms的企业应用程序模式（电子书）--前言</a>
+            <em>2017-10-10 20:23:45</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本电子书提供了使用</span>Xamarin.Forms构建跨平台企业应用程序的指导。Xamarin.Forms是一个跨平台的UI工具包，允许开发人员轻松创建可以跨平台共享的本机用户界面布局，包括iOS，Android和通用Windows平台（UWP）。它为企业员工（B2E），企业对企业（B2B）和企业对消费者（B2C）应用程序提供了全面的解决方案，提供了在所有目标平台上共享代码的能力，并有助于降低总体拥有成本（TCO））。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p>
+	<span style="font-family:宋体;"><span>该指南为开发适应性强，可维护和可测试的</span>Xamarin.Forms<span>企业应用程序提供架构指导。指南提供了关于如何实现</span><span>MVVM</span><span>，依赖注入，导航，验证和配置管理的指导，同时保持松耦合。</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>此外，还有指导使用</span>IdentityServer执行身份验证和授权，访问</span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>式微服务的数据和单元测试。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p>
+	<span style="font-family:宋体;"><span>该指南附带了</span></span><span><a href="https://github.com/dotnet-architecture/eShopOnContainers/tree/master/src/Mobile"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">eShopOnContainers</span></u></a></span><span style="font-family:宋体;"><span>移动应用程序的源代码，和</span></span><span><a href="https://github.com/dotnet-architecture/eShopOnContainers"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">eShopOnContainers<span>参考应用程序</span></span></u></a></span><span style="font-family:宋体;"><span>的源代码。</span></span><span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序是使用Xamarin.Forms开发的跨平台企业应用程序，它连接到一系列名为eShopOnContainers参考应用程序的集装式微服务器。然而，eShopOnContainers移动应用程序可以配置为为希望避免部署集装式微服务器的用户使用模拟服务的数据。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<h2>
+	<a name="Whats_Left_Out_of_this_Guides_Scope"></a><span style="font-family:宋体;"><a name="_Toc495413634"></a><span>本指南的范围是什么？</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b>
+</h2>
+<p>
+	<span style="font-family:宋体;"><span>本指南针对已经熟悉</span>Xamarin.Forms<span>的读者。</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>有关</span>Xamarin.Forms的详细介绍，</span><span style="font-family:宋体;font-size:12.0000pt;"><span>请参阅</span></span><span style="font-family:宋体;font-size:12.0000pt;">Xamarin开发人员中心上的</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">Xamarin.Forms<span>文档</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>，</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>以及</span></span><span><a href="https://aka.ms/xamebook"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;"><span>使用</span>Xamarin.Forms<span>创建移动应用程序</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该指南是</span></span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">.NET Microservices: <span>集成</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>的补充，</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>其重点是开发和部署容器化的微服务器。值得阅读的其他指南包括</span></span><span><a href="http://aka.ms/WebAppEbook"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;"><span>使用</span>ASP.NET Core<span>和</span><span>Microsoft Azure</span><span>构建和开发现代</span><span>Web</span><span>应用程序</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;">, </span><span><a href="http://aka.ms/dockerlifecycleebook"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;"><span>使用</span>Microsoft<span>平台和工具的</span></span></u><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>容器</span></span></u><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;">Docker<span>应用程序生命周期</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>，以及</span></span><span><a href="http://aka.ms/MobAppDev/StndPDF"><u><span style="font-family:Calibri;color:#0000FF;text-decoration:underline;"><span>用于移动应用程序开发的</span>Microsoft<span>平台和工具</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<h2>
+	<a name="Who_Should_Use_this_Guide"></a><span style="font-family:宋体;"><a name="_Toc495413635"></a><span>谁应该使用本指南</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b>
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本指南的受众主要是开发人员和架构师，他们希望学习如何使用</span>Xamarin.Forms来构建和实施跨平台企业应用程序。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>次要受众是技术决策者，他们希望获得架构和技术概述，然后决定使用</span>Xamarin.Forms选择跨平台企业应用程序开发的方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<h2>
+	<a name="How_to_Use_this_Guide"></a><span style="font-family:宋体;"><a name="_Toc495413636"></a><span>如何使用本指南</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b>
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>本指南重点介绍使用</span>Xamarin.Forms构建跨平台企业应用程序。 因此，应该阅读全文，为了理解这些应用程序及其技术考虑提供基础。 该指南及其示例应用程序也可以作为创建新企业应用程序的起点或参考。 使用关联的示例应用程序作为新应用程序的模板，或查看如何组织应用程序的组件部件。 然后，请参阅本指南中的架构指导。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>随时将本指南转发给团队成员，以帮助确保使用</span>Xamarin.Forms对跨平台企业应用程序开发的共同理解。 让每个人从一套常用的术语和基本原则工作，将有助于确保架构模式和实践的一致应用。</span><span style="font-family:宋体;font-size:12.0000pt;"></span>
+</p>
+<p style="text-align:left;">
+	<span style="font-family:Calibri;font-size:10.5000pt;"><br>
+</span><span style="font-family:Calibri;font-size:10.5000pt;"></span>
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(43) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773361" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773214.html">使用Xamarin.Forms的企业应用程序模式（电子书）</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773362.html">使用Xamarin.Forms的企业应用程序模式（电子书）--介绍</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

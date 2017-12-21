@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--容器化微服务-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773369.html">使用Xamarin.Forms的企业应用程序模式（电子书）--容器化微服务</a>
+            <em>2017-10-10 20:37:40</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>开发客户端</span> - 服务器应用程序的重点是建立在每个层中使用特定技术的分层应用程序。这样的应用通常被称为单片应用，并且被封装在用于峰值负载预分配的硬件上。这种开发方法的主要缺点是每个层级组件之间的紧密耦合，各个组件不能轻易缩放，并且测试成本。一个简单的更新可能对该层的其余部分产生不可预见的影响，因此更改应用程序组件需要对其整个层进行重新测试并重新部署。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>特别是在云时代，个别组件不能轻松扩展。单片应用程序包含域特定的功能，通常由前端，业务逻辑和数据存储等功能层划分。通过将整个应用程序克隆到多台机器上来整合单片应用程序，如图</span>8-1所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/monolithicapp.png" alt="" height="466" width="288"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>8-1<span>：单片应用程序缩放方法</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413698"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>微服务</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>微服务提供了不同的应用程序开发和部署方法，这种方法适合现代云应用的敏捷性，规模和可靠性要求。微服务应用程序被分解成独立的组件，它们一起工作以提供应用程序的整体功能。微服务术语强调，应用程序应由足够小的服务组成，以反映独立的关注点，以便每个微服务器实现单个功能。此外，每个微服务都具有明确的合同，以便其他微服务器可以与其进行通信和共享数据。微服务的典型例子包括购物车，库存处理，采购子系统和支付处理。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>相比之下，微型服务可以独立扩展，而不是大规模集成应用。这意味着需要更多处理能力或网络带宽来支持需求的特定功能区域可以被缩放而不是不必要地缩小应用程序的其他区域。图</span>8-2说明了这种方法，其中微服务部署和独立扩展，创建跨机器服务的实例。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/microservicesapp.png" alt="" height="429" width="531"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-2：微服务应用程序缩放方法</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>微服务横向扩展可以几乎瞬时，允许应用程序适应变化的负载。例如，应用程序面向</span>Web的功能中的单个微服务器可能是应用程序中唯一需要扩展以处理其他传入流量的微服务器。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>应用程序可扩展性的经典模型是具有负载均衡的无状态层，其中包含共享外部数据存储以存储持久数据。有状态的微服务管理自己的持久性数据，通常将其存储在其所在的服务器上，以避免网络访问的开销和跨服务操作的复杂性。这样可以最快地处理数据，并可以消除对缓存系统的需求。此外，可扩展的状态微服务通常在其实例之间分配数据，以便管理数据大小和传输吞吐量，超过单个服务器可以支持的数据量。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">Microservices还支持独立更新。微服务之间的松散耦合提供了快速可靠的应用演进。它们独立的分布式特性支持滚动更新，只有一个微服务器的实例的一个子集在任何给定的时间才能更新。因此，如果检测到问题，则可以在所有实例使用故障代码或配置进行更新之前回滚错误更新。类似地，微服务通常使用模式版本控制，以便客户端在应用更新时看到一致的版本，无论与哪个微服务器实例进行通信。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>因此，微服务应用程序与单片应用程序有很多好处：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>每个微服务器相对较小，易于管理和演进。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>可以独立于其他服务开发和部署每个微服务器。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>每个微服务都可以独立扩展。例如，目录服务或购物篮服务可能需要比订购服务进行扩展。因此，所产生的基础架构将在扩展时更有效地消耗资源。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>每个微服务器隔离任何问题。例如，如果服务中存在问题，则仅影响该服务。其他服务可以继续处理请求。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>每个微服务器都可以使用最新的技术。由于微服务是自主的，并行运行，所以可以使用最新的技术和框架，而不是被迫使用可能被单片应用程序使用的旧框架。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>然而，基于微服务的解决方案也有潜在的缺点：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>选择如何将应用程序分割成微服务器可能具有挑战性，因为每个微服务器必须是完全自主的，端到端的，包括对其数据源的责任。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>开发人员必须实施业务间通信，这增加了应用程序的复杂性和延迟。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>多个微服务器之间的原子交易通常是不可能的。因此，业务需求必须包含微服务之间的最终一致性。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>在生产中，部署和管理许多独立服务受损害的系统存在操作复杂性。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>直接的客户端与微服务器的通信可能难以重构微服务的合同。例如，随着时间的推移，系统如何划分为服务可能需要改变。单个服务可能会分为两个或更多服务，两个服务可能会合并。当客户端直接与微服务器通信时，此重构工作可能会破坏与客户端应用的兼容性。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413699"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>容器化</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>容器化是软件开发的一种方法，其中将应用程序及其版本化依赖关系集以及其环境配置抽象为部署清单文件，作为容器映像打包在一起，作为一个单元进行测试，并部署到主机操作系统。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>容器是一个独立的资源控制和便携式操作环境，应用程序可以在不触及其他容器或主机的资源的情况下运行。</span> <span>因此，容器看起来像新安装的物理计算机或虚拟机。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>容器和虚拟机之间有很多相似之处，如图</span>8-3所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/containersvsvirtualmachines.png" alt="" height="946" width="1758"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;"><span>图</span>8-3<span>：虚拟机和容器的比较</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>容器运行操作系统，具有文件系统，并且可以通过网络访问，就像它是物理机或虚拟机一样。然而，容器使用的技术和概念与虚拟机非常不同。虚拟机包括应用程序，所需的依赖关系以及完整的客户机操作系统。容器包括应用程序及其依赖关系，但与其他容器共享操作系统，作为主机操作系统上的隔离进程运行（除了每个容器的专用虚拟机内运行的</span>Hyper-V容器之外）。因此，容器共享资源，并且通常比虚拟机需要更少的资源。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>面向容器的开发和部署方法的优点在于它消除了环境设置不一致以及与之相关的问题所产生的大多数问题。此外，</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>允许通过根据需要实施新的容器来快速应用放大功能。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>创建和使用容器时的关键概念是：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器主机：配置为托管容器的物理或虚拟机。容器主机将运行一个或多个容器。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器镜像：图像由堆叠在一起的分层文件系统的联合组成，并且是容器的基础。镜像没有状态，它不会随着部署到不同的环境而改变。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器：容器是图像的运行时实例。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器操作系统映像：从映像部署容器。容器操作系统映像是构成容器的潜在许多图像层中的第一层。容器操作系统是不可变的，不能修改。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>容器存储库：每次创建容器映像时，映像及其依赖项都存储在本地存储库中。这些图像可以在容器主机上重复使用多次。容器映像也可以存储在公共或私有注册表（如</span></span><span><a href="https://hub.docker.com/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">Docker Hub</span></u></a></span><span style="font-family:宋体;font-size:10.5000pt;"><span>）中，以便它们可以在不同容器主机之间使用。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>企业在实施基于微服务的应用程序时越来越多地采用</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>，而</span>Docker已经成为大多数软件平台和云供应商采用的标准容器实现。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers参考应用程序使用Docker来托管四个</span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>式后端微服务器，如图</span>8-4所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/microservicesarchitecture.png" alt="" height="682" width="678"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-4：eShopOnContainers参考应用后端微服务</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>参考应用程序中后端服务的体系结构以协作微服务和容器的形式分解为多个自主子系统。</span> <span>每个微服务提供单一功能区域：身份服务，目录服务，订购服务和篮子服务。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>每个微服务器都有自己的数据库，允许它与其他微服务器完全分离。</span> <span>必要时，使用应用程序级事件实现来自不同微服务器的数据库之间的一致性。</span> <span>有关更多信息，请参阅</span></span><span><a href="#communication_between_microservices"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>微服务之间的通信</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关参考应用程序的更多信息，请参阅</span></span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集成化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="communication_between_client_and_microse"></a><span style="font-family:宋体;"><a name="_Toc495413700"></a><span>客户与微服务之间的通信</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers移动应用程序使用直接的客户端到微服务器通信与容器化的后端微服务进行通信，如图8-5所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/directclienttomicroservicecommunication.png" alt="" height="346" width="579"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-5：直接的客户端到微服务器通信</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>通过直接的客户端到微服务器通信，移动应用程序通过其公共端点直接向每个微服务器发出请求，每个微服务器具有不同的</span>TCP端口。 在生产中，端点通常映射到微服务器的负载均衡器，该平衡器在可用实例之间分配请求。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：考虑使用</span>API网关通信。 当构建基于大型和复杂的基于微服务的应用程序时，直接的客户端到微服务器通信可能具有缺点，但是对于小型应用程序来说，这是足够的。 当设计具有数十个微服务器的大型基于微服务的应用程序时，请考虑使用API网关通信。 有关更多信息，请参阅</span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集群化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="communication_between_microservices"></a><span style="font-family:宋体;"><a name="_Toc495413701"></a><span>微服务之间的通信</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>基于微服务的应用程序是分布式系统，可能运行在多台机器上。每个服务实例通常是一个进程。因此，服务必须使用诸如</span>HTTP，TCP，高级消息队列协议（AMQP）或二进制协议之类的进程间通信协议进行交互，这取决于每个服务的性质。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>微服务到微服务通信的两种常见方法是在查询数据时进行基于</span>HTTP的REST通信，以及在跨多个微服务器通信更新时的轻量级异步消息传递。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当跨多个微服务传播更改时，基于异步消息传递的事件驱动通信至关重要。通过这种方法，当一个值得注意的事件发生时，一个微服务器发布一个事件，例如当它更新一个业务实体时。其他微服务订阅这些事件。然后，当微服务器收到一个事件时，它会更新自己的业务实体，这可能会导致更多的事件被发布。这种发布订阅功能通常通过事件总线实现。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>事件总线允许微服务之间的发布</span> - 订阅通信，而不需要组件彼此明确地识别，如图8-6所示。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/eventbus.png" alt="" height="284" width="703"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-6：发布订阅事件总线</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>从应用的角度来看，事件总线只是一个通过接口公开的发布订阅通道。</span> <span>然而，事件总线的实现方式可能会有所不同。</span> <span>例如，事件总线实现可以使用</span>RabbitMQ，Azure服务总线或其他服务总线，如NServiceBus和MassTransit。 图8-7显示了eShopOnContainers参考应用程序中事件总线的使用方法。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/microservicesarchitecturewitheventbus.png" alt="" height="909" width="1379"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-7：参考应用中的异步事件驱动通信</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>使用</span>RabbitMQ实现的eShopOnContainers事件总线提供一对多异步发布订阅功能。 这意味着在发布事件之后，可以有多个订阅者监听相同的事件。 图8-9说明了这种关系。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/containerized-microservices/Images/eventdrivencommunication.png" alt="" height="526" width="1779"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>8-9：一对多通信</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>这种一对多通信方法使用事件来实现跨越多个服务的业务事务，确保服务之间的最终一致性。</span> <span>最终一致的事务由一系列分布式步骤组成。</span> <span>因此，当用户简档微服务器接收到</span>UpdateUser命令时，它会更新用户在其数据库中的详细信息，并将UserUpdated事件发布到事件总线。 篮子微服务器和订购微服务器已订阅接收该事件，并且响应于在其各自的数据库中更新其买方信息。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：使用</span>RabbitMQ实现的eShopOnContainers事件总线仅用作概念证明。 对于生产系统，应考虑替代事件总线实现。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>有关事件总线实现的信息，请参阅</span></span><span><a href="https://aka.ms/microservicesebook"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">.NET Microservices<span>：集群化</span><span>.NET</span><span>应用程序的体系结构</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413702"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>概要</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>微服务提供了适用于现代云应用的敏捷性，规模和可靠性要求的应用程序开发和部署方法。</span> <span>微服务的主要优点之一是可以独立扩展，这意味着可以对特定的功能区进行扩展，这需要更多的处理能力或网络带宽来支持需求，而不会不必要地缩放没有经历的应用程序区域</span> <span>需求增加。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>容器是一个独立的资源控制和便携式操作环境，应用程序可以在不触及其他容器或主机的资源的情况下运行。</span> <span>企业在实施基于微服务的应用程序时越来越多地采用</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>容器</span></span><span style="font-family:宋体;font-size:12.0000pt;"><span>，而</span>Docker已经成为大多数软件平台和云供应商采用的标准容器实现。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(10) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773369" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773368.html">使用Xamarin.Forms的企业应用程序模式（电子书）--配置管理</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773370.html">使用Xamarin.Forms的企业应用程序模式（电子书）--认证和授权</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>

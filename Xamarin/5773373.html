@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .Blog_nav1_2 a em { display:inline-block; width:16px; height:13px; background:url(/image/v.jpg) no-repeat; overflow:hidden;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>使用Xamarin.Forms的企业应用程序模式（电子书）--单元测试-renxiao2003-ChinaUnix博客</title></head><body><div class="Blog_right1_1 Blog_right1_11">
+        <div class="Blog_right1_2 ">
+			<!--推荐博文-->
+          <div class="Blog_tit4 Blog_tit5">
+                        <b class="Blog_b1"></b>
+            <a href="/uid-78707-id-5773373.html">使用Xamarin.Forms的企业应用程序模式（电子书）--单元测试</a>
+            <em>2017-10-10 20:42:05</em>
+          </div>
+          <div class="Blog_con2">
+            <div class="Blog_con3">
+              <p>分类： <span>Android平台</span></p>
+			                
+            </div>
+           <div class="Blog_wz1" style="word-wrap: break-word;">
+						<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>移动应用程序具有独特的问题，桌面和基于</span>Web的应用程序不必担心。移动用户将因其使用的设备，网络连接，服务可用性以及一系列其他因素而有所不同。因此，应该测试移动应用程序，因为它们将被用于现实世界，以提高其质量，可靠性和性能。应用程序应该执行许多类型的测试，包括单元测试，集成测试和用户界面测试，单元测试是最常见的测试形式。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>单元测试需要应用程序的一小部分，通常是一种方法，将其与代码的其余部分隔离，并验证其是否符合预期。其目标是检查每个功能单元是否按预期执行，以使整个应用程序不会传播错误。检测出错的地方更有效地在二级故障点间接观察到错误的影响。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当它是软件开发工作流程的组成部分时，单元测试对代码质量的影响最大。一旦编写了一个方法，单元测试应该被写入，以响应标准，边界和不正确的输入数据情况来验证方法的行为，并且检查代码所做的任何显式或隐含的假设。或者，使用测试驱动开发，单元测试是在代码之前编写的。在这种情况下，单元测试既可以作为设计文档和功能规范。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：单元测试对于回归是非常有效的</span> - 也就是说，以前工作但已被错误更新打扰的功能。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>单元测试通常使用排列动作断言模式：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>单元测试方法的排列部分初始化对象并设置传递给被测方法的数据的值。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;">act<span>部分使用所需的参数调用被测方法。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>断言部分验证被测方法的动作是否符合预期。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>遵循此模式可确保单元测试可读和一致。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413734"></a><span style="font-family:宋体;"><span>依赖注入和单元测试</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>采用松散耦合架构的动机之一是它有助于单元测试。</span> Autofac注册的类型之一是OrderService类。 以下代码示例显示了此类的大纲：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code753')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code753" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000FF;">public</span> <span style="color:#0000FF;">class</span> OrderDetailViewModel <span style="color:#0000CC;">:</span> ViewModelBase <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">private</span> IOrderService _ordersService<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">public</span> OrderDetailViewModel<span style="color:#0000CC;">(</span>IOrderService ordersService<span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        _ordersService <span style="color:#0000CC;">=</span> ordersService<span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span><span style="color:#0000CC;">.</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">OrderDetailViewModel类具有对IOrderService类型的依赖关系，当容器实例化一个OrderDetailViewModel对象时，该容器将被解析。 但是，而不是创建一个OrderService对象来单元测试OrderDetailViewModel类，而不是为了测试而将OrderService对象替换为模拟。 图10-1说明了这种关系。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<img src="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/unit-testing/Images/unittesting.png" alt="" height="257" width="378"><span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>图</span>10-1：实现IOrderService接口的类</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此方法允许在运行时将</span>OrderService对象传递到OrderDetailViewModel类中，为了可测试性，它允许在测试时将OrderMockService类传递到OrderDetailViewModel类中。 这种方法的主要优点是它可以执行单元测试，而不需要诸如Web服务或数据库之类的笨重资源。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413735"></a><span style="font-family:宋体;"><span>测试</span>MVVM<span>应用程序</span></span><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>从</span>MVVM应用程序中测试模型和查看模型与测试任何其他类相同，可以使用相同的工具和技术（如单元测试和模拟）。然而，有一些典型的模型和模型类的模式，可以从特定的单元测试技术中受益。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：每个单元测试测试一件事。不要试图对单位的行为进行单元测试。这样做会导致难以阅读和更新的测试。解释失败时也可能导致混乱。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序使用</span><span><a href="https://xunit.github.io/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;">xUnit</span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>执行单元测试，它支持两种不同类型的单元测试：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>事实是总是真实的测试，它测试不变的条件。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p style="margin-left:36.0000pt;text-indent:-18.0000pt;text-align:left;">
+	<span style="font-family:Symbol;font-size:10.0000pt;"><span>·<span> </span></span></span><span style="font-family:宋体;font-size:10.5000pt;"><span>理论是仅针对特定数据集的测试。</span></span><span style="font-family:Calibri;font-size:10.5000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;">eShopOnContainers手机应用程序附带的单元测试是事实测试，因此每个单元测试方法都使用[Fact]属性进行装饰。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>注意：</span>xUnit测试由测试运行器执行。要执行测试运行器，请为所需的平台运行eShopOnContainers.TestRunner项目。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413736"></a><span style="font-family:宋体;"><span>测试异步功能</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>在实现</span>MVVM模式时，视图模型通常会以异步方式调用服务操作。 调用这些操作的代码的测试通常使用mock作为实际服务的替换。 以下代码示例演示了通过将模拟服务传递到视图模型中来测试异步功能：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code509')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code509" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> async Task OrderPropertyIsNotNullAfterViewModelInitializationTest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var orderService <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> OrderMockService<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var orderViewModel <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> OrderDetailViewModel<span style="color:#0000CC;">(</span>orderService<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    var order <span style="color:#0000CC;">=</span> await orderService<span style="color:#0000CC;">.</span>GetOrderAsync<span style="color:#0000CC;">(</span>1<span style="color:#0000CC;">,</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>AuthToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    await orderViewModel<span style="color:#0000CC;">.</span>InitializeAsync<span style="color:#0000CC;">(</span>order<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span>NotNull<span style="color:#0000CC;">(</span>orderViewModel<span style="color:#0000CC;">.</span>Order<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此单元测试检查</span>OrderDetailViewModel实例的Order属性在InitializeAsync方法被调用后将具有一个值。 当视图模型的对应视图导航到时，将调用InitializeAsync方法。 有关导航的更多信息，请参阅</span><span><a href="https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/navigation/"><u><span style="font-family:宋体;color:#0000FF;text-decoration:underline;"><span>导航</span></span></u></a></span><span style="font-family:宋体;font-size:12.0000pt;"><span>。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>OrderDetailViewModel实例被创建时，它期望一个OrderService实例被指定为一个参数。 但是，OrderService从Web服务检索数据。 因此，OrderMockService实例（它是OrderService类的模拟版本）被指定为OrderDetailViewModel构造函数的参数。 然后，当调用视图模型的InitializeAsync方法（调用IOrderService操作）时，将检索模拟数据，而不是与Web服务通信。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413737"></a><span style="font-family:宋体;"><span>测试</span>INotifyPropertyChanged<span>实现</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>实现</span>INotifyPropertyChanged接口允许视图对来自视图模型和模型的更改做出反应。 这些更改不限于控件中显示的数据 - 它们也用于控制视图，例如查看模型状态，导致动画启动或禁用控件。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>可以通过单元测试直接更新的属性可以通过将事件处理程序附加到</span>PropertyChanged事件并在为属性设置新值后检查事件是否引发来测试。 以下代码示例显示了这样一个测试：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code57')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code57" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> async Task SettingOrderPropertyShouldRaisePropertyChanged<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> invoked <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var orderService <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> OrderMockService<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var orderViewModel <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> OrderDetailViewModel<span style="color:#0000CC;">(</span>orderService<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    orderViewModel<span style="color:#0000CC;">.</span>PropertyChanged <span style="color:#0000CC;">+</span><span style="color:#0000CC;">=</span> <span style="color:#0000CC;">(</span>sender<span style="color:#0000CC;">,</span> e<span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">if</span> <span style="color:#0000CC;">(</span>e<span style="color:#0000CC;">.</span>PropertyName<span style="color:#0000CC;">.</span>Equals<span style="color:#0000CC;">(</span><span style="color:#FF00FF;">"Order"</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				            invoked <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var order <span style="color:#0000CC;">=</span> await orderService<span style="color:#0000CC;">.</span>GetOrderAsync<span style="color:#0000CC;">(</span>1<span style="color:#0000CC;">,</span> GlobalSetting<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Instance</span><span style="color:#0000CC;">.</span>AuthToken<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    await orderViewModel<span style="color:#0000CC;">.</span>InitializeAsync<span style="color:#0000CC;">(</span>order<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">True</span><span style="color:#0000CC;">(</span>invoked<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>该单元测试调用</span>OrderViewModel类的InitializeAsync方法，这会导致其Order属性被更新。 单元测试将通过，前提是PropertyChanged事件为Order属性生成。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413738"></a><span style="font-family:宋体;"><span>测试基于消息的通信</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>使用</span>MessagingCenter类在松散耦合类之间通信的查看模型可以通过订阅被测试代码发送的消息进行单元测试，如以下代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code770')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code770" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> AddCatalogItemCommandSendsAddProductMessageTest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> messageReceived <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">false</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var catalogService <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CatalogMockService<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var catalogViewModel <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> CatalogViewModel<span style="color:#0000CC;">(</span>catalogService<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Xamarin<span style="color:#0000CC;">.</span><span style="color:#FF0000;">Forms</span><span style="color:#0000CC;">.</span>MessagingCenter<span style="color:#0000CC;">.</span>Subscribe<span style="color:#0000CC;">&lt;</span>CatalogViewModel<span style="color:#0000CC;">,</span> CatalogItem<span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span> <br>
+			</li>
+			<li>
+				        <span style="color:#0000FF;">this</span><span style="color:#0000CC;">,</span> MessageKeys<span style="color:#0000CC;">.</span>AddProduct<span style="color:#0000CC;">,</span> <span style="color:#0000CC;">(</span>sender<span style="color:#0000CC;">,</span> arg<span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        messageReceived <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">true</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    catalogViewModel<span style="color:#0000CC;">.</span>AddCatalogItemCommand<span style="color:#0000CC;">.</span>Execute<span style="color:#0000CC;">(</span><span style="color:#0000FF;">null</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">True</span><span style="color:#0000CC;">(</span>messageReceived<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此单元测试检查</span>CatalogViewModel是否发布AddProduct消息以响应其AddCatalogItemCommand被执行。 因为MessagingCenter类支持多播消息订阅，所以单元测试可以订阅AddProduct消息并执行回调委托以响应接收它。 此回调委托，指定为lambda表达式，设置Assert语句使用的布尔字段，以验证测试的行为。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413739"></a><span style="font-family:宋体;"><span>测试异常处理</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;"><span>也可以写出单元测试，检查是否针对无效操作或输入引发特定异常，如以下代码示例所示：</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code252')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code252" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> InvalidEventNameShouldThrowArgumentExceptionText<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var behavior <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> MockEventToCommandBehavior <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				        EventName <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"OnItemTapped"</span> <br>
+			</li>
+			<li>
+				    <span style="color:#0000CC;">}</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    var <span style="color:#FF0000;">listView</span> <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> <span style="color:#FF0000;">ListView</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span>Throws<span style="color:#0000CC;">&lt;</span><span style="color:#FF0000;">ArgumentException</span><span style="color:#0000CC;">&gt;</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <span style="color:#0000CC;">=</span><span style="color:#0000CC;">&gt;</span> <span style="color:#FF0000;">listView</span><span style="color:#0000CC;">.</span>Behaviors<span style="color:#0000CC;">.</span>Add<span style="color:#0000CC;">(</span>behavior<span style="color:#0000CC;">)</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p style="text-align:left;">
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>此单元测试将抛出异常，因为</span>ListView控件没有名为OnItemTapped的事件。 Assert.Throws 方法是一种通用方法，其中T是预期异常的类型。 传递给Assert.Throws 方法的参数是一个将表示异常的lambda表达式。 因此，单元测试将通过，只要lambda表达式抛出一个ArgumentException。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"> </span> 
+</p>
+<p>
+	<span style="font-family:'Segoe UI Symbol';font-size:12.0000pt;"><span>?</span></span><span style="font-family:宋体;font-size:12.0000pt;"> </span><span style="font-family:宋体;font-size:12.0000pt;"><span>提示：避免编写检查异常消息字符串的单元测试。</span> <span>异常消息字符串可能随时间而变化，因此依赖于它们的存在的单元测试被认为是脆弱的。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h2>
+	<a name="_Toc495413740"></a><span style="font-family:宋体;"><span>测试验证</span></span><b><span style="font-family:宋体;font-weight:bold;font-size:18.0000pt;"></span></b> 
+</h2>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>测试验证实现有两个方面：测试任何验证规则是否正确实现，并测试</span>ValidatableObject 类按预期执行。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>验证逻辑通常很容易测试，因为它通常是一个独立的过程，其中输出取决于输入。</span> <span>对于具有至少一个关联验证规则的每个属性，调用</span>Validate方法的结果应该是测试的，如下面的代码示例所示：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code138')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code138" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> CheckValidationPassesWhenBothPropertiesHaveDataTest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var mockViewModel <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> MockViewModel<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    mockViewModel<span style="color:#0000CC;">.</span>Forename<span style="color:#0000CC;">.</span>Value <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"John"</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    mockViewModel<span style="color:#0000CC;">.</span>Surname<span style="color:#0000CC;">.</span>Value <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"Smith"</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> isValid <span style="color:#0000CC;">=</span> mockViewModel<span style="color:#0000CC;">.</span>Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">True</span><span style="color:#0000CC;">(</span>isValid<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>MockViewModel实例中的两个ValidatableObject 属性都具有数据时，此单元测试会检查验证是否成功。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>除了检查验证成功之外，验证单元测试还应检查每个</span>ValidatableObject 实例的Value，IsValid和Errors属性的值，以验证该类是否按预期执行。 以下代码示例演示了执行此操作的单元测试：</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><br>
+</span>
+</p>
+<div>
+	<div class="codeheads">
+		<p>
+			点击(<span style="cursor:pointer;color:red;" .="code_hide('code625')">此处</span>)折叠或打开
+		</p>
+	</div>
+	<div id="code625" class="codeText">
+		<ol style="margin:0 1px 0 0px;padding-left:40px;" start="1" class="dp-css">
+			<li>
+				<span style="color:#000000;"><span style="color:#0000CC;">[</span>Fact<span style="color:#0000CC;">]</span> <br>
+</span> 
+			</li>
+			<li>
+				<span style="color:#0000FF;">public</span> <span style="color:#0000FF;">void</span> CheckValidationFailsWhenOnlyForenameHasDataTest<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">{</span> <br>
+			</li>
+			<li>
+				    var mockViewModel <span style="color:#0000CC;">=</span> <span style="color:#0000FF;">new</span> MockViewModel<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    mockViewModel<span style="color:#0000CC;">.</span>Forename<span style="color:#0000CC;">.</span>Value <span style="color:#0000CC;">=</span> <span style="color:#FF00FF;">"John"</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    <span style="color:#0000FF;">bool</span> isValid <span style="color:#0000CC;">=</span> mockViewModel<span style="color:#0000CC;">.</span>Validate<span style="color:#0000CC;">(</span><span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">False</span><span style="color:#0000CC;">(</span>isValid<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span>NotNull<span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Forename<span style="color:#0000CC;">.</span>Value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">Null</span><span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Surname<span style="color:#0000CC;">.</span>Value<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">True</span><span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Forename<span style="color:#0000CC;">.</span>IsValid<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span><span style="color:#0000FF;">False</span><span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Surname<span style="color:#0000CC;">.</span>IsValid<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span>Empty<span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Forename<span style="color:#0000CC;">.</span>Errors<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				    Assert<span style="color:#0000CC;">.</span>NotEmpty<span style="color:#0000CC;">(</span>mockViewModel<span style="color:#0000CC;">.</span>Surname<span style="color:#0000CC;">.</span>Errors<span style="color:#0000CC;">)</span><span style="color:#0000CC;">;</span> <br>
+			</li>
+			<li>
+				<span style="color:#0000CC;">}</span> 
+			</li>
+		</ol>
+	</div>
+</div>
+<br>
+<p>
+	<br>
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>当</span>MockViewModel的Surname属性没有任何数据，并且正确设置每个ValidatableObject 实例的Value，IsValid和Errors属性时，此单元测试将检查验证失败。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<h1>
+	<a name="_Toc495413741"></a><b><span style="font-family:宋体;font-weight:bold;font-size:22.0000pt;"><span>概要</span></span></b><b><span style="font-family:Calibri;font-weight:bold;font-size:22.0000pt;"></span></b> 
+</h1>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>单元测试需要应用程序的一小部分，通常是一种方法，将其与代码的其余部分隔离，并验证其是否符合预期。</span> <span>其目标是检查每个功能单元是否按预期执行，以使整个应用程序不会传播错误。</span></span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>可以通过用模拟依赖对象行为的模拟对象替换依赖对象来隔离被测对象的行为。</span> <span>这样可以在不需要诸如</span>Web服务或数据库等笨重资源的情况下执行单元测试。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>
+<p>
+	<span style="font-family:宋体;font-size:12.0000pt;"><span>从</span>MVVM应用程序测试模型和查看模型与测试任何其他类相同，可以使用相同的工具和技术。</span><span style="font-family:宋体;font-size:12.0000pt;"></span> 
+</p>                                   </div>
+            <!-- <div class="Blog_con3_1">管理员在2009年8月13日编辑了该文章文章。</div> -->
+            <div class="Blog_con2_1 Blog_con3_2">
+              <div>
+			  <!--<img src="/image/default/tu_8.png">-->
+			  <!-- JiaThis Button BEGIN -->
+				<div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" title="分享到QQ空间" href="#" data-cmd="qzone"></a><a class="bds_tsina" title="分享到新浪微博" href="#" data-cmd="tsina"></a><a class="bds_tqq" title="分享到腾讯微博" href="#" data-cmd="tqq"></a><a class="bds_renren" title="分享到人人网" href="#" data-cmd="renren"></a><a class="bds_weixin" title="分享到微信" href="#" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<!-- JiaThis Button END -->
+			  </div>
+              阅读(31) | 评论(0) | 转发(0) |
+			                <div class="HT_line3"></div>
+            </div>
+            <div class="Blog_con3_3">
+              <div><span id="digg_num">0</span><a href="javascript:void(0)" id="digg" bid="5773373" url="/blog/digg.html"></a></div>
+              <p>上一篇：<a href="/uid-78707-id-5773372.html">使用Xamarin.Forms的企业应用程序模式（电子书）--访问远程数据</a></p>
+              <p>下一篇：<a href="/uid-78707-id-5773574.html">一本电子书（目录导航）</a></p>
+            </div>
+          </div>
+          <div class="Blog_con3_4">
+            <div class="Blog_tit2 Blog_tit6">相关热门文章</div>
+			            <ul class="Blog_ul7">
+						  <li><span class="Blog_span7"></span><a href="/uid-22312037-id-4008229.html" title="Android之开发环境搭建" target="blank">Android之开发环境搭建</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26885609-id-3479671.html" title="Android自定义View的实现" target="blank">Android自定义View的实现...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-9185047-id-3460344.html" title="AndroidManifest.xml配置文件详解" target="blank">AndroidManifest.xml配置文件...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-26898698-id-3896769.html" title="查看Android应用包名package和入口activity名称" target="blank">查看Android应用包名package和...</a></li>
+						  <li><span class="Blog_span7"></span><a href="/uid-25799257-id-3964454.html" title="Android相对布局+圆角按钮+Shape样式" target="blank">Android相对布局+圆角按钮+Sha...</a></li>
+			            </ul>
+            <ul class="Blog_ul7">
+			            </ul>
+            <div class="clear"></div>
+          </div>
+		  <!--
+          <div class="Blog_con3_4 Blog_con3_5">
+            <div class="Blog_tit2 Blog_tit7">热门推荐</div>
+            <ul>
+			              <li><a href="" title="" target='blank' ></a></li>
+			            </ul>
+          </div>
+		  -->
+        </div>
+      </div></body>
